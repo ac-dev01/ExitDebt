@@ -2,27 +2,26 @@
 
 **See your debt clearly. Solve it smartly.**
 
-ExitDebt is a free debt health assessment platform for salaried Indians. Users enter their PAN and phone number, get an instant CIBIL-powered debt health score, and see exactly how much they're overpaying in interest — all in 30 seconds.
+ExitDebt is a debt intelligence platform for salaried Indians. Users enter their PAN and phone number, get an instant CIBIL-powered debt health score with unique intelligence tools, and get 3 months of free access — all in 30 seconds.
 
 ---
 
 ## 💡 How It Works
 
 ```
-PAN + Phone  →  CIBIL Pull  →  Debt Health Score  →  Savings Estimate  →  Expert Callback
+PAN + Phone  →  CIBIL Pull  →  Full Dashboard (3mo free)  →  ₹999/yr Subscribe
 ```
 
 1. **Enter PAN + Phone** — Verified via OTP
 2. **Instant CIBIL Pull** — All loans and credit cards auto-populated
 3. **Debt Health Score** — Proprietary 0–100 score (based on DTI, rates, utilization, history)
-4. **Savings Estimate** — "You're overpaying ₹47K/year in interest"
-5. **Expert Callback** — Sales team explains restructuring path, facilitates consolidation
+4. **Intelligence Tools** — Debt Freedom GPS, Interest Leak Report, Smart Payment Prioritizer, Salary Day Cash Flow, Credit Score Impact Predictor
+5. **3-Month Free Trial** — Full dashboard access, then ₹999/year to continue
 
 ## 💰 Business Model
 
-Free tool for users. Revenue from:
-- **Tiered Advisory Plans** (₹999 / ₹2,999 / ₹4,999) — sold by sales team during callback
-- **Lender Commissions** (1–3% on consolidation loans facilitated via lending partners)
+₹999/year subscription after 3-month free trial. Additional revenue from:
+- **Lender Commissions** (1–3% on consolidation loans facilitated by sales team via lending partners)
 - **Lead Gen Fees** (₹500–₹2,000 per PAN-verified, CIBIL-enriched lead)
 
 ## 🛠️ Tech Stack
@@ -35,7 +34,7 @@ Free tool for users. Revenue from:
 | CRM | Zoho CRM |
 | Payments | UPI via aggregator |
 | WhatsApp | WATI |
-| Hosting | Vercel (frontend) + Railway/Render (backend) |
+| Hosting | AWS (specific services TBD with dev team) |
 
 ## 📂 Project Docs
 
