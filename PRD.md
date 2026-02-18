@@ -1,6 +1,6 @@
 # ExitDebt — Product Requirements Document (PRD)
 
-> **Version:** 1.0 | **Date:** 2026-02-17 | **Author:** Kumar R Anand + ARIA
+> **Version:** 2.0 | **Date:** 2026-02-18 | **Author:** Kumar R Anand + ARIA
 > **Status:** Draft — Pending Dev Team Review
 > **Companion Doc:** [STRATEGY.md](file:///c:/Users/ASUS/Desktop/ventures/Aaditri-Technologies/ExitDebt/STRATEGY.md)
 
@@ -8,10 +8,10 @@
 
 ## 1. Product Overview
 
-**ExitDebt** is a web-based platform that helps salaried Indians understand and restructure their debt. Users input their PAN and phone number, get an instant CIBIL-powered debt health assessment, and are connected with the ExitDebt sales team for advisory plans and consolidation loan facilitation.
+**ExitDebt** is a web-based **debt intelligence platform** that helps salaried Indians understand, track, and optimize their debt. Users input their PAN and phone number, get an instant CIBIL-powered debt health assessment with unique intelligence tools (Freedom GPS, Interest Leak Report, Payment Prioritizer), and get 3 months of free access. After trial, users subscribe at **₹999/year** for ongoing monitoring via Account Aggregator. Separately, the sales team proactively calls high-scare-score users to facilitate consolidation loans.
 
 ### Business Objective
-Generate revenue through **tiered advisory plans** (sold by sales team) and **lender commissions** (consolidation loans facilitated via lending partners).
+Generate revenue through **₹999/year subscriptions** (recurring) and **lender commissions** (1–3% on consolidation loans facilitated by sales team).
 
 ### Key Constraint
 - **3-person dev team**, 13-week build to soft launch
@@ -26,11 +26,15 @@ Generate revenue through **tiered advisory plans** (sold by sales team) and **le
 
 ```
 ┌─────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ LANDING  │───▶│ ONBOARD  │───▶│ RESULTS  │───▶│ CALLBACK │───▶│  UPSELL  │
-│  PAGE    │    │  FLOW    │    │  SCREEN  │    │  BOOKED  │    │  (CALL)  │
+│ LANDING  │───▶│ ONBOARD  │───▶│ FULL     │───▶│ 3-MONTH  │───▶│ ₹999/yr  │
+│  PAGE    │    │  FLOW    │    │ DASHBOARD│    │  TRIAL   │    │  SUBSCRIBE│
 └─────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
-  Awareness      PAN + Phone     Scare Score     "We'll call"   Advisory Plan
-  + Trust        + Consent       + Savings $      Schedule       + Loan Offer
+  Awareness      PAN + Phone     All tools      Free access     Ongoing
+  + Trust        + Consent       instantly       + AA setup      monitoring
+
+  ┌──────────────────────────── PARALLEL ────────────────────────────┐
+  │  Sales team calls high-scare-score users → consolidation loan   │
+  └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -64,7 +68,7 @@ Generate revenue through **tiered advisory plans** (sold by sales team) and **le
 │  └──────────┘  └──────────┘  └──────────┘                │
 │                                                            │
 │  TRUST SIGNALS                                             │
-│  • "We earn from lenders, not from you"                   │
+│  • "Free for 3 months. Then ₹999/year."                     │
 │  • "Your data is encrypted & never shared without consent"│
 │  • "10,000+ health checks completed" (after traction)     │
 │                                                            │
@@ -85,7 +89,8 @@ Generate revenue through **tiered advisory plans** (sold by sales team) and **le
 - No clutter. No stock images. Clean typography (Inter).
 - FAQ must address the trust gap ("Is this a scam?")
 - Mobile-first responsive design
-- "We earn from lenders, not from you" — prominent, Zerodha-style transparency
+- "Free for 3 months. Then ₹999/year." — prominent, clean pricing
+- Lender commissions and lead partnerships disclosed in Privacy Policy and Terms of Service, not on the landing page
 
 **Functional Requirements:**
 
@@ -124,8 +129,12 @@ Generate revenue through **tiered advisory plans** (sold by sales team) and **le
 │  │   │  +91  9876543210                     │          │  │
 │  │   └──────────────────────────────────────┘          │  │
 │  │                                                      │  │
-│  │   ☐ I consent to ExitDebt checking my credit report │  │
-│  │     [Privacy Policy]                                │  │
+│  │   ☐ I consent to ExitDebt checking my credit report  │  │
+│  │                                                      │  │
+│  │   ☐ I consent to sharing my insights with            │  │
+│  │     financial partners (optional)                    │  │
+│  │                                                      │  │
+│  │   [Privacy Policy]                                   │  │
 │  │                                                      │  │
 │  │   [ Check My Debt Health → ]                         │  │
 │  │                                                      │  │
@@ -141,7 +150,8 @@ Generate revenue through **tiered advisory plans** (sold by sales team) and **le
 | OB-01 | PAN validation (format: AAAAA9999A, regex check) | P0 |
 | OB-02 | Phone validation (10 digits, Indian mobile format) | P0 |
 | OB-03 | OTP verification on phone number (SMS OTP) | P0 |
-| OB-04 | Consent checkbox must be checked before submit | P0 |
+| OB-04 | Consent checkbox 1 (CIBIL check) must be checked before submit — mandatory | P0 |
+| OB-04b | Consent checkbox 2 (sharing with financial partners) is optional — stores opt-in status | P0 |
 | OB-05 | On submit: send PAN + phone to backend → trigger CIBIL API call | P0 |
 | OB-06 | Loading state: "Pulling your credit report..." (3-8 sec) with progress animation | P0 |
 | OB-07 | Error handling: invalid PAN, CIBIL API timeout, no data found | P0 |
@@ -161,9 +171,9 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 
 ---
 
-#### Screen 3: Results — Debt Health Dashboard (FREE)
+#### Screen 3: Results — Debt Intelligence Dashboard (FREE for 3 months)
 
-**Purpose:** Show scare score + savings potential. Create urgency. Capture callback request.
+**Purpose:** Deliver full debt intelligence tools. Create ongoing value. Drive subscription retention.
 
 **Layout:**
 
@@ -172,60 +182,58 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 │  [ExitDebt Logo]                              Hi, Saurabh 👋  │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │                                                          │  │
-│  │   YOUR DEBT HEALTH SCORE                                │  │
-│  │                                                          │  │
+│  │  YOUR DEBT HEALTH SCORE                                │  │
 │  │          ┌─────────────┐                                │  │
-│  │          │             │                                │  │
-│  │          │    38       │   ⚠️ NEEDS ATTENTION            │  │
-│  │          │   /100      │                                │  │
-│  │          │             │   "Your debt structure is      │  │
-│  │          └─────────────┘    costing you significantly   │  │
-│  │          (circular gauge)    more than necessary."      │  │
-│  │                                                          │  │
+│  │          │    38/100   │   ⚠️ NEEDS ATTENTION            │  │
+│  │          └─────────────┘                                │  │
+│  │          (animated gauge)                               │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │  YOUR DEBT SUMMARY                                      │  │
-│  │                                                          │  │
-│  │  Total Outstanding    │  ₹6,24,000                      │  │
-│  │  Monthly EMI Outgo    │  ₹28,400                        │  │
-│  │  Active Accounts      │  4                               │  │
-│  │  Avg Interest Rate    │  22.3%                           │  │
+│  │  Total Outstanding: ₹6,24,000  │  Monthly EMI: ₹28,400  │  │
+│  │  Active Accounts: 4            │  Avg Rate: 22.3%       │  │
 │  │  ──────────────────────────────────────────              │  │
-│  │                                                          │  │
 │  │  HDFC Credit Card     │ ₹1,82,000  │ 42% APR  │ ⚠️     │  │
 │  │  Bajaj Personal Loan  │ ₹3,00,000  │ 14% APR  │ ✓      │  │
 │  │  Amazon Pay EMI       │ ₹42,000    │ 18% APR  │ ⚠️     │  │
 │  │  ICICI Credit Card    │ ₹1,00,000  │ 36% APR  │ ⚠️     │  │
-│  │                                                          │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │                                                          │  │
-│  │   💰 YOU'RE OVERPAYING ₹47,200/YEAR                     │  │
-│  │                                                          │  │
-│  │   By restructuring your debt, you could save            │  │
-│  │   ₹47,200 every year in interest charges.               │  │
-│  │                                                          │  │
-│  │   Want to know exactly how?                             │  │
-│  │                                                          │  │
-│  │   ┌──────────────────────────────────────────────────┐  │  │
-│  │   │  Best time to call you?                          │  │  │
-│  │   │                                                  │  │  │
-│  │   │  ○ Morning (10am–12pm)                          │  │  │
-│  │   │  ○ Afternoon (2pm–5pm)                          │  │  │
-│  │   │  ○ Evening (6pm–8pm)                            │  │  │
-│  │   │                                                  │  │  │
-│  │   │  [ Get My Free Callback → ]                      │  │  │
-│  │   └──────────────────────────────────────────────────┘  │  │
-│  │                                                          │  │
+│  │  🧭 DEBT FREEDOM GPS                                    │  │
+│  │  Current path: Debt-free in 4y 3mo                      │  │
+│  │  With restructuring: 3y 4mo  ⚡ (11 months sooner)      │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  💸 INTEREST LEAK REPORT (This Month)                   │  │
+│  │  EMIs paid: ₹28,400                                     │  │
+│  │  → To principal: ₹14,200  │  → To interest: ₹14,200    │  │
+│  │  ⚠️ ₹9,100 of that interest was AVOIDABLE               │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  💰 SMART PAYMENT PRIORITIZER                           │  │
+│  │  Have extra cash? Enter amount: [₹_____]                │  │
+│  │  → ₹7,000 to HDFC Card (saves ₹2,940/yr)               │  │
+│  │  → ₹3,000 to ICICI Card (saves ₹1,080/yr)              │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │  📅 SALARY DAY CASH FLOW                                │  │
+│  │  Salary (5th): ₹60,000                                  │  │
+│  │  7th: HDFC Card -₹5,400 │ 10th: Bajaj PL -₹12,000     │  │
+│  │  15th: Amazon -₹3,500   │ 20th: ICICI -₹7,500         │  │
+│  │  After all EMIs: ₹31,600  │  EMI-to-salary: 47% ⚠️     │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │  📊 SHARE YOUR RESULTS  (optional)                      │  │
 │  │  [ Download PDF ] [ Share on WhatsApp ]                  │  │
 │  └──────────────────────────────────────────────────────────┘  │
+│                                                                │
+│  ✅ Full access free for 3 months. Last updated: 18 Feb 2026  │
 │                                                                │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -238,33 +246,39 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 | RS-02 | Display all active loan/card accounts from CIBIL response | P0 |
 | RS-03 | Calculate annual overpayment vs. optimal restructured rate | P0 |
 | RS-04 | Flag high-interest accounts (>18% APR) with warning icon | P0 |
-| RS-05 | Callback time preference selector + submit button | P0 |
-| RS-06 | On callback submit: update lead in CRM with preferred time, trigger notification to Kumar/callers | P0 |
-| RS-07 | Download PDF of debt summary (basic) | P1 |
-| RS-08 | WhatsApp share button (share score + link to ExitDebt) | P1 |
-| RS-09 | Show user's first name (from CIBIL data) for personalization | P1 |
-| RS-10 | Score gauge animated on page load (builds from 0 to actual score) | P1 |
+| RS-05 | **Debt Freedom GPS**: Calculate debt-free date at current pace + optimized pace | P0 |
+| RS-06 | **Interest Leak Report**: Split EMI into principal vs. interest, flag avoidable portion | P0 |
+| RS-07 | **Smart Payment Prioritizer**: Input extra amount → show optimal allocation across debts | P0 |
+| RS-08 | **Salary Day Cash Flow**: User inputs salary date + amount → map all EMIs to cash flow calendar | P1 |
+| RS-09 | **Credit Score Impact Predictor**: Estimate CIBIL score change for each payoff action | P1 |
+| RS-10 | **Milestone Celebrations**: Detect closed accounts/score improvements, show celebration UI | P1 |
+| RS-11 | Download PDF of debt summary | P1 |
+| RS-12 | WhatsApp share button (share score + link to ExitDebt) | P1 |
+| RS-13 | Show user's first name (from CIBIL data) for personalization | P1 |
+| RS-14 | Score gauge animated on page load (builds from 0 to actual score) | P1 |
+| RS-15 | "Last updated" timestamp with "Refresh Data" button (on-demand CIBIL re-pull, limited per year) | P0 |
 
 ---
 
-#### Screen 4: Callback Confirmed
+#### Screen 4: Post-Signup Engagement
 
-**Purpose:** Confirm callback, set expectations, keep user engaged.
+**Purpose:** Keep the user engaged after health check. Highlight dashboard features. Drive content engagement.
 
 ```
 ┌────────────────────────────────────────────────────────────┐
 │                                                            │
-│   ✅ You're all set, Saurabh!                             │
+│   ✅ Welcome to ExitDebt, Saurabh!                         │
 │                                                            │
-│   Our debt specialist will call you                        │
-│   today between 2pm – 5pm.                                │
+│   Your full debt intelligence dashboard is ready.          │
+│   You have 3 months of free access.                        │
 │                                                            │
-│   What to expect on the call:                             │
-│   1. We'll walk through your debt situation               │
-│   2. Explain your best restructuring options              │
-│   3. Help you save ₹47,200/year if you choose to act     │
+│   What's included:                                         │
+│   • Debt Freedom GPS — your debt-free countdown            │
+│   • Interest Leak Report — see where money is wasted       │
+│   • Smart Payment Prioritizer — optimize extra payments    │
+│   • Salary Day Cash Flow — see what's left after EMIs      │
 │                                                            │
-│   [Download Your Debt Summary PDF]                         │
+│   [Go to My Dashboard →]                                   │
 │                                                            │
 │   Meanwhile, learn more:                                   │
 │   • How debt restructuring works →                        │
@@ -276,9 +290,9 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 
 | ID | Requirement | Priority |
 |----|------------|----------|
-| CB-01 | Confirmation message with selected time slot | P0 |
-| CB-02 | WhatsApp confirmation message to user's phone | P1 |
-| CB-03 | Content links for engagement while waiting | P1 |
+| PS-01 | Welcome message with user's first name | P0 |
+| PS-02 | Feature highlights with dashboard CTA | P0 |
+| PS-03 | Content links for engagement | P1 |
 
 ---
 
@@ -340,17 +354,19 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
        │
        ▼
 ┌──────────────┐     ┌──────────────┐     ┌──────────────────┐
-│ HealthScore  │     │  Callback    │     │  AdvisoryPlan    │
+│ HealthScore  │     │  Callback    │     │  Subscription    │
 │              │     │              │     │                  │
 │  id          │     │  id          │     │  id              │
 │  user_id     │     │  user_id     │     │  user_id         │
-│  score       │     │  preferred_  │     │  tier (S/P/Pr)   │
-│  dti_ratio   │     │   time_slot  │     │  price           │
-│  avg_rate    │     │  status      │     │  status          │
-│  savings_est │     │  assigned_to │     │  purchased_at    │
-│  calculated_ │     │  called_at   │     │  plan_data (JSON)│
-│   at         │     │  outcome     │     │                  │
-└──────────────┘     └──────────────┘     └──────────────────┘
+│  score       │     │  preferred_  │     │  status          │
+│  dti_ratio   │     │   time_slot  │     │  (trial/active/  │
+│  avg_rate    │     │  status      │     │   expired)       │
+│  savings_est │     │  assigned_to │     │  trial_start     │
+│  calculated_ │     │  called_at   │     │  trial_end       │
+│   at         │     │  outcome     │     │  subscribed_at   │
+└──────────────┘     └──────────────┘     │  expires_at      │
+                                          │  payment_ref     │
+                                          └──────────────────┘
 ```
 
 ### Key Data Rules
@@ -371,11 +387,12 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 
 | Integration | Purpose | Phase |
 |------------|---------|-------|
-| **TransUnion CIBIL API** | Pull credit report using PAN | Phase 1 |
+| **TransUnion CIBIL API** | Pull credit report using PAN (initial + quarterly refresh) | Phase 1 |
+| **Account Aggregator** (Finvu/OneMoney) | Monthly data refresh for subscribers (FIU registration required) | Phase 1 (Sprint 4–5) |
 | **SMS OTP Provider** (MSG91/Twilio) | Phone verification | Phase 1 |
 | **Zoho CRM API** | Create/update lead profiles, assign callbacks | Phase 1 |
 | **WATI (WhatsApp API)** | Confirmation messages, nurture drips | Phase 1 |
-| **UPI Payment Aggregator** (Razorpay/Cashfree) | UPI collect/intent for advisory plan payments, UPI AutoPay mandates for Phase 2 | Phase 1 |
+| **UPI Payment Aggregator** (Razorpay/Cashfree) | UPI collect/intent for ₹999/year subscription payments | Phase 1 |
 
 ### Core API Endpoints
 
@@ -386,8 +403,13 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | POST | `/api/health-check` | Submit PAN + phone → trigger CIBIL pull → return parsed results |
 | GET | `/api/health-check/:id` | Get results for a completed health check |
 | POST | `/api/callback` | Book a callback with time preference |
-| POST | `/api/advisory/purchase` | Initiate UPI payment for advisory plan (generates UPI intent/collect request) |
-| GET | `/api/advisory/:id` | Get advisory plan details (for paid users) |
+| POST | `/api/subscription/purchase` | Initiate UPI payment for ₹999/year subscription |
+| GET | `/api/subscription/status` | Check subscription status (trial/active/expired) |
+| POST | `/api/aa/consent` | Initiate AA consent flow for data linking |
+| GET | `/api/aa/fetch` | Fetch latest data from Account Aggregator |
+| GET | `/api/dashboard/:userId` | Get full dashboard data (Freedom GPS, Interest Leak, Payment Prioritizer, Cash Flow) |
+| GET | `/api/dashboard/sales/:userId` | Sales-only: full dashboard + 12-month trends + lender offers |
+| POST | `/api/prioritizer/calculate` | Calculate optimal payment allocation for given extra amount |
 
 ---
 
@@ -447,17 +469,17 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | 7 | Set up Zoho CRM free account | Kumar | ☐ |
 | 8 | Register SMS OTP provider (MSG91 dev account) | Dev 2 | ☐ |
 | 9 | Purchase `exitdebt.com` domain | Kumar | ☐ |
-| 10 | Set up Vercel project (frontend hosting) | Dev 1 | ☐ |
+| 10 | Set up AWS project (hosting — specific services TBD) | Dev 1 | ☐ |
 
 ### Sprint Breakdown (Suggested)
 
 | Sprint | Weeks | Focus | Deliverables |
 |--------|-------|-------|-------------|
 | **Sprint 1** | 1–2 | Foundation | Project setup, design system, DB schema, FastAPI scaffold |
-| **Sprint 2** | 3–4 | Core Backend | CIBIL API integration, OTP flow, health score algorithm |
-| **Sprint 3** | 5–6 | Core Frontend | Landing page, onboarding form, results dashboard |
-| **Sprint 4** | 7–8 | Integration | CRM integration, callback flow, lead scoring, savings calculator |
-| **Sprint 5** | 9–10 | Payments + Polish | UPI payment integration, advisory plan purchase flow, WhatsApp nudges |
+| **Sprint 2** | 3–4 | Core Backend | CIBIL API integration, OTP flow, health score algorithm, savings calculator |
+| **Sprint 3** | 5–6 | Core Frontend + Intelligence | Landing page, onboarding, dashboard with Freedom GPS, Interest Leak Report, Payment Prioritizer, Cash Flow |
+| **Sprint 4** | 7–8 | Integration + AA | CRM integration, lead scoring, AA FIU registration + consent flow, Credit Score Impact Predictor |
+| **Sprint 5** | 9–10 | Subscription + Polish | UPI payment for ₹999/year, subscription gate, WhatsApp nudges, Milestone Celebrations, Sales Dashboard |
 | **Sprint 6** | 11–12 | Testing + Launch Prep | Bug fixes, performance, chatbot, internal testing |
 | **Sprint 7** | 13 | Soft Launch | Beta users, monitoring, hotfixes |
 
@@ -473,7 +495,7 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | PWA support | Installable, works offline for cached results |
 | Data encryption | AES-256 for stored CIBIL data, TLS 1.3 for transit |
 | DPDP compliance | Consent flows, data deletion request support |
-| Uptime | 99.5% (Vercel + Railway/Render handles this) |
+| Uptime | 99.5% (AWS managed services) |
 | Analytics | PostHog or Mixpanel for funnel tracking |
 
 ---
@@ -484,10 +506,15 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 |----------|-----------|-----------|
 | PAN-based CIBIL pull (not manual entry) | Zero friction, instant value, verified lead data | Kumar |
 | Organic-only GTM | Debt = shame topic, organic trust > paid ads | Kumar |
-| Freemium + sales-driven monetization | Free tool drives volume, sales team monetizes via advisory + loans | Kumar |
+| Subscription model (₹999/year, 3mo free) | Tool-as-product, recurring revenue, clean value exchange | Kumar |
 | Zerodha-like design | Clean, transparent, trust-first | Kumar |
 | Python (FastAPI) backend | Dev team preference, strong for data processing/algorithms | Kumar |
-| UPI payments via aggregator | India-native, lower fees than cards, AutoPay for Phase 2 subs | Kumar |
+| UPI payments via aggregator | India-native, lower fees than cards | Kumar |
+| CIBIL + AA hybrid data strategy | CIBIL for discovery, AA for cheap ongoing monitoring | Kumar + ARIA |
+| 7 unique intelligence tools | Differentiation from free CIBIL apps (Freedom GPS, Interest Leak, etc.) | Kumar + ARIA |
+| User dashboard vs Sales dashboard separation | Clean UX for users, information advantage for sales team | Kumar |
 | Next.js frontend | SEO critical for organic/chatbot discoverability | ARIA |
 | PostgreSQL | Structured financial data, ACID compliance needed | ARIA |
 | Zoho CRM (free tier) | Cost-effective for beta, can upgrade later | ARIA |
+| No success fees | Keep pricing clean — user pays ₹999/year only. Revenue from lender commissions + lead gen. | Kumar |
+| Disclosure in Privacy Policy | Lender commissions + lead sales disclosed in Privacy Policy & Terms, not on landing page. Consent checkbox covers data sharing. | Kumar |
