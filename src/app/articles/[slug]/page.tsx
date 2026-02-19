@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 
-const ARTICLES: Record<string, { title: string; category: string; content: string[] }> = {
+const ARTICLES: Record<string, { title: string; category: string; description: string; content: string[] }> = {
     "credit-card-mistakes": {
         title: "5 mistakes people make with credit cards",
         category: "Credit Cards",
+        description: "Most people don't realise how much revolving credit actually costs them. Learn the 5 most common credit card mistakes and how to avoid them.",
         content: [
             "Credit cards can be powerful financial tools when used wisely. However, most Indians fall into common traps that cost them thousands of rupees every year without even realizing it.",
             "1. Paying only the minimum due — When you pay just the minimum amount, you're charged interest on the remaining balance at rates as high as 42% per annum. On a balance of ₹1,00,000, that's nearly ₹3,500 in interest every month.",
@@ -19,6 +21,7 @@ const ARTICLES: Record<string, { title: string; category: string; content: strin
     "priya-saved-62k": {
         title: "How Priya saved ₹62K/year by restructuring her debt",
         category: "Success Story",
+        description: "A real story of someone who turned their finances around in 3 months by using debt restructuring to cut ₹62,400 in annual interest.",
         content: [
             "Priya, a 32-year-old marketing manager from Mumbai, was carrying ₹3.2 lakh in debt across two accounts — an SBI credit card with ₹85,000 outstanding at 24% APR and an HDFC personal loan of ₹2,35,000 at 13.5%.",
             "Like many salaried professionals, Priya was paying her EMIs and minimum dues on time, but she'd never stopped to calculate exactly how much she was paying in interest every year.",
@@ -32,6 +35,7 @@ const ARTICLES: Record<string, { title: string; category: string; content: strin
     "personal-loan-vs-credit-card": {
         title: "Personal loan vs. credit card debt: which to pay first?",
         category: "Strategy",
+        description: "The answer isn't always obvious. Here's a framework to decide whether to pay off your personal loan or credit card debt first.",
         content: [
             "When you owe money on both a personal loan and credit cards, deciding which to pay off first can feel overwhelming. Two popular strategies — the debt avalanche and debt snowball methods — offer different approaches, and the right one depends on your situation.",
             "The debt avalanche method says: pay off the highest interest rate debt first. Since credit cards typically charge 24-42% APR versus personal loans at 10-16%, the math strongly favors paying off credit card debt first. You'll save more money in total interest.",
@@ -52,6 +56,27 @@ export async function generateStaticParams() {
     return Object.keys(ARTICLES).map((slug) => ({ slug }));
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const article = ARTICLES[slug];
+    if (!article) return {};
+    return {
+        title: `${article.title} — ExitDebt`,
+        description: article.description,
+        openGraph: {
+            title: article.title,
+            description: article.description,
+            type: "article",
+            siteName: "ExitDebt",
+        },
+        twitter: {
+            card: "summary",
+            title: article.title,
+            description: article.description,
+        },
+    };
+}
+
 export default async function ArticlePage({ params }: PageProps) {
     const { slug } = await params;
     const article = ARTICLES[slug];
@@ -60,25 +85,44 @@ export default async function ArticlePage({ params }: PageProps) {
         notFound();
     }
 
+    // Article structured data
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: article.title,
+        description: article.description,
+        author: { "@type": "Organization", name: "ExitDebt" },
+        publisher: { "@type": "Organization", name: "ExitDebt" },
+    };
+
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen" style={{ backgroundColor: "var(--color-bg)" }}>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+
             {/* Nav */}
-            <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.08)" }}>
+            <nav
+                className="sticky top-0 z-50 backdrop-blur-sm"
+                style={{ backgroundColor: "rgba(252,252,252,0.92)", borderBottom: "1px solid var(--color-border)" }}
+            >
                 <div className="max-w-6xl mx-auto px-8 h-16 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-2">
                         <div
                             className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold"
-                            style={{ backgroundColor: "var(--navy)" }}
+                            style={{ backgroundColor: "var(--color-purple)" }}
                         >
                             E
                         </div>
-                        <span className="text-lg font-bold tracking-tight" style={{ color: "var(--navy)" }}>
+                        <span className="text-lg font-bold tracking-tight" style={{ color: "var(--color-text-primary)" }}>
                             ExitDebt
                         </span>
                     </Link>
                     <Link
                         href="/#articles"
-                        className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                        className="text-sm font-medium transition-colors"
+                        style={{ color: "var(--color-text-secondary)" }}
                     >
                         ← Back to home
                     </Link>
@@ -88,29 +132,38 @@ export default async function ArticlePage({ params }: PageProps) {
             <article className="max-w-3xl mx-auto px-8 py-14 sm:py-20">
                 <div className="mb-8">
                     <span
-                        className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                        style={{ backgroundColor: "var(--cobalt)", color: "white" }}
+                        className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-white"
+                        style={{ backgroundColor: "var(--color-purple)" }}
                     >
                         {article.category}
                     </span>
-                    <h1 className="text-2xl sm:text-3xl font-bold mt-3 leading-tight" style={{ color: "var(--navy)" }}>
+                    <h1
+                        className="text-2xl sm:text-3xl font-bold mt-3 leading-tight"
+                        style={{ color: "var(--color-text-primary)" }}
+                    >
                         {article.title}
                     </h1>
-                    <p className="text-sm text-gray-400 mt-3">5 min read</p>
+                    <p className="text-sm mt-3" style={{ color: "var(--color-text-muted)" }}>
+                        5 min read
+                    </p>
                 </div>
 
                 <div className="space-y-5">
                     {article.content.map((paragraph, i) => (
-                        <p key={i} className="text-base text-gray-600 leading-relaxed">{paragraph}</p>
+                        <p key={i} className="text-base leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                            {paragraph}
+                        </p>
                     ))}
                 </div>
 
-                <div className="mt-14 pt-8 border-t border-gray-100 text-center">
-                    <p className="text-sm text-gray-500 mb-4">Want to see how much you could save?</p>
+                <div className="mt-14 pt-8 text-center" style={{ borderTop: "1px solid var(--color-border)" }}>
+                    <p className="text-sm mb-4" style={{ color: "var(--color-text-muted)" }}>
+                        Want to see how much you could save?
+                    </p>
                     <Link
                         href="/"
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-sm font-bold hover:opacity-90 transition-all"
-                        style={{ backgroundColor: "var(--cobalt)" }}
+                        style={{ backgroundColor: "var(--color-purple)" }}
                     >
                         Check your debt health
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
