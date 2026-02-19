@@ -16,7 +16,7 @@ declare global {
 }
 
 export function trackEvent(event: string, properties?: EventProperties): void {
-    if (typeof window !== 'undefined' && window.posthog) {
+    if (typeof window !== 'undefined' && window.posthog && typeof window.posthog.capture === 'function') {
         window.posthog.capture(event, properties);
     }
 }

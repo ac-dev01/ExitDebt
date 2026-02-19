@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import CookieConsent from '@/components/CookieConsent';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'ExitDebt — Stop Overpaying on Your Loans',
@@ -59,8 +60,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-bg">
-        {children}
-        <CookieConsent />
+        <AuthProvider>
+          {children}
+          <CookieConsent />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
-import OTPInput from '@/components/OTPInput';
 import AlertBanner from '@/components/AlertBanner';
 import FAQAccordion from '@/components/FAQAccordion';
-import { sendOTP, verifyOTP, submitHealthCheck } from '@/lib/api';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import DashboardView from '@/components/DashboardView';
+import IncomeOverlay from '@/components/IncomeOverlay';
+import { useAuth } from '@/context/AuthContext';
 import { analytics } from '@/lib/analytics';
 
 type Step = 'details' | 'otp' | 'processing';
@@ -65,7 +67,7 @@ const testimonials = [
 ];
 
 export default function LandingPage() {
-  const router = useRouter();
+  const { login, isAuthenticated, monthlySalary, isReady } = useAuth();
   const [step, setStep] = useState<Step>('details');
   const [name, setName] = useState('');
   const [pan, setPan] = useState('');
@@ -73,6 +75,16 @@ export default function LandingPage() {
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [incomeCompleted, setIncomeCompleted] = useState(false);
+
+  // STATE 1: Authenticated + income entered → show dashboard
+  if (isReady && isAuthenticated && (monthlySalary > 0 || incomeCompleted)) {
+    return <DashboardView />;
+  }
+
+  // STATE 2 & 3: Show landing page, with income overlay on top if authenticated
+  // (The overlay renders conditionally below)
 
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
   const phoneRegex = /^[6-9]\d{9}$/;
@@ -97,73 +109,46 @@ export default function LandingPage() {
     return true;
   };
 
+  // MVP: Mock OTP flow — no real API calls
   const handleSendOTP = async () => {
     setError('');
     if (!validateDetails()) return;
     setLoading(true);
-    try {
-      await sendOTP(phone);
+    // Simulate OTP send delay
+    setTimeout(() => {
       analytics.otpSent(phone);
       setStep('otp');
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to send OTP. Please try again.');
-    } finally {
       setLoading(false);
-    }
+    }, 800);
   };
 
-  const handleVerifyOTP = async (code: string) => {
+  // MVP: Accept any 6-digit OTP
+  const handleVerifyOTP = (code: string) => {
     setError('');
-    setLoading(true);
-    try {
-      const result = await verifyOTP(phone, code);
-      if (result.token) {
-        analytics.otpSuccess();
-        await runHealthCheck();
-      }
-    } catch (err: unknown) {
-      analytics.otpFailed();
-      setError(err instanceof Error ? err.message : 'Invalid OTP. Please try again.');
-      setLoading(false);
+    if (code.length !== 6) {
+      setError('Please enter a 6-digit code.');
+      return;
     }
-  };
-
-  const runHealthCheck = async () => {
+    analytics.otpSuccess();
+    // Go straight to processing screen
     setStep('processing');
-    setError('');
     analytics.healthCheckStarted();
-    try {
-      const result = await submitHealthCheck({
-        pan: pan.toUpperCase(),
-        phone,
-        name,
-        consent: true,
-      });
-      analytics.healthCheckSuccess(result.score);
-      router.push(`/results/${result.id}`);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
-      analytics.healthCheckFailed(msg);
-      setError(msg);
-      setStep('details');
-    }
+    // Simulate credit report pull (2 seconds), then set auth state
+    // (login triggers re-render → income overlay appears automatically)
+    setTimeout(() => {
+      login(pan.toUpperCase(), phone);
+    }, 2000);
   };
 
   return (
+    <>
+    <Navbar />
     <main className="min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-bg/90 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold">
-            <span className="text-text-primary">Exit</span>
-            <span className="gradient-text">Debt</span>
-          </Link>
-          <div className="hidden sm:flex items-center gap-6 text-sm text-text-secondary">
-            <a href="#how-it-works" className="hover:text-purple transition-colors">How It Works</a>
-            <a href="#faq" className="hover:text-purple transition-colors">FAQ</a>
-          </div>
-        </div>
-      </nav>
+
+      {/* Income overlay — shown when authenticated but no income yet */}
+      {isReady && isAuthenticated && monthlySalary === 0 && (
+        <IncomeOverlay onComplete={() => setIncomeCompleted(true)} />
+      )}
 
       {/* Hero + Form */}
       <section className="pt-28 pb-16 px-4">
@@ -277,10 +262,32 @@ export default function LandingPage() {
                   We sent a 6-digit code to {phone.slice(0, 2)}****{phone.slice(-4)}
                 </p>
                 <div className="space-y-5">
-                  <OTPInput onComplete={handleVerifyOTP} disabled={loading} />
-                  {loading && (
-                    <p className="text-center text-sm text-purple">Verifying...</p>
+                  <div>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="Enter 6-digit OTP"
+                      className="w-full px-4 py-3 bg-bg-soft border border-border rounded-xl text-text-primary placeholder:text-text-muted focus:border-purple focus:outline-none focus:ring-2 focus:ring-purple/10 transition-all text-center text-2xl tracking-[0.4em] font-bold"
+                      autoFocus
+                    />
+                    <p className="text-xs text-text-muted text-center mt-2">For demo, enter any 6 digits (e.g. 123456)</p>
+                  </div>
+                  {error && (
+                    <div className="mb-2">
+                      <AlertBanner type="error" message={error} onDismiss={() => setError('')} />
+                    </div>
                   )}
+                  <PrimaryButton
+                    onClick={() => handleVerifyOTP(otpCode)}
+                    loading={loading}
+                    disabled={otpCode.length !== 6}
+                    className="w-full"
+                  >
+                    Verify &amp; Continue →
+                  </PrimaryButton>
                   <div className="text-center">
                     <button
                       onClick={handleSendOTP}
@@ -351,6 +358,14 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          <div className="text-center mt-8">
+            <Link
+              href="/how-it-works"
+              className="text-sm font-semibold text-purple hover:underline"
+            >
+              Learn more about how it works →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -413,21 +428,19 @@ export default function LandingPage() {
             No jargon. No fine print. Just clear answers.
           </p>
           <FAQAccordion items={faqs} />
+          <div className="text-center mt-8">
+            <Link
+              href="/faq"
+              className="text-sm font-semibold text-purple hover:underline"
+            >
+              View all frequently asked questions →
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-text-muted">
-            © {new Date().getFullYear()} ExitDebt. All rights reserved.
-          </div>
-          <div className="flex gap-6 text-sm text-text-secondary">
-            <Link href="/privacy" className="hover:text-purple transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-purple transition-colors">Terms of Service</Link>
-          </div>
-        </div>
-      </footer>
     </main>
+    <Footer />
+    </>
   );
 }
