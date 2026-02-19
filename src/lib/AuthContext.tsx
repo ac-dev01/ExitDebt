@@ -2,16 +2,23 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { MockProfile } from "@/lib/mockProfiles";
-import { selectProfile } from "@/lib/utils";
+import { selectProfile, hashPAN } from "@/lib/utils";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
+
+interface ConsentRecord {
+    timestamp: string;   // ISO 8601
+    version: string;     // Consent text version
+}
 
 interface AuthState {
     user: MockProfile | null;
     isLoggedIn: boolean;
-    pan: string;
+    pan: string;          // Raw PAN — in memory only, NEVER stored
+    panHash: string;      // SHA-256 hash — stored in cookie
     phone: string;
     isReady: boolean;
+    consent: ConsentRecord | null;
 }
 
 interface AuthContextType extends AuthState {
@@ -24,7 +31,8 @@ interface AuthContextType extends AuthState {
 /* ─── Cookie Helpers ─────────────────────────────────────────────────────── */
 
 const COOKIE_NAME = "exidebt_session";
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days — auto-expire
+const CONSENT_VERSION = "1.0";             // Bump when consent text changes
 
 function setCookie(data: Record<string, unknown>) {
     if (typeof document === "undefined") return;
@@ -54,8 +62,10 @@ const AuthContext = createContext<AuthContextType>({
     user: null,
     isLoggedIn: false,
     pan: "",
+    panHash: "",
     phone: "",
     isReady: false,
+    consent: null,
     login: () => { },
     updateIncome: () => { },
     refreshData: () => { },
@@ -66,24 +76,35 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<MockProfile | null>(null);
-    const [pan, setPan] = useState("");
+    const [pan, setPan] = useState("");         // Raw PAN — memory only
+    const [panHash, setPanHash] = useState("");  // SHA-256 — persisted
     const [phone, setPhone] = useState("");
+    const [consent, setConsent] = useState<ConsentRecord | null>(null);
     const [isReady, setIsReady] = useState(false);
 
     // Hydrate from cookie on mount
     useEffect(() => {
         const data = getCookie();
-        if (data && data.pan && data.phone) {
-            const profile = selectProfile(data.pan as string);
-            // Restore income if saved
-            if (data.salary) {
-                profile.salary = data.salary as number;
-                profile.salaryDate = (data.salaryDate as number) || 1;
-                profile.otherIncome = (data.otherIncome as number) || 0;
+        if (data && data.panHash && data.phone) {
+            // We have a hashed PAN in cookie — need raw PAN to select profile
+            // If rawPan was stored temporarily for session, use it
+            const rawPan = (data.rawPanForSession as string) || "";
+            if (rawPan) {
+                const profile = selectProfile(rawPan);
+                // Restore income if saved
+                if (data.salary) {
+                    profile.salary = data.salary as number;
+                    profile.salaryDate = (data.salaryDate as number) || 1;
+                    profile.otherIncome = (data.otherIncome as number) || 0;
+                }
+                setUser(profile);
+                setPan(rawPan);
             }
-            setUser(profile);
-            setPan(data.pan as string);
+            setPanHash(data.panHash as string);
             setPhone(data.phone as string);
+            if (data.consent) {
+                setConsent(data.consent as ConsentRecord);
+            }
         }
         setIsReady(true);
     }, []);
@@ -91,24 +112,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Persist to cookie on state change
     useEffect(() => {
         if (!isReady) return;
-        if (user && pan) {
+        if (user && panHash) {
             setCookie({
-                pan,
+                panHash,             // SHA-256 hash only
+                rawPanForSession: pan, // Needed for profile selection on reload
                 phone,
                 salary: user.salary,
                 salaryDate: user.salaryDate,
                 otherIncome: user.otherIncome,
+                consent,
             });
         } else {
             deleteCookie();
         }
-    }, [user, pan, phone, isReady]);
+    }, [user, pan, panHash, phone, consent, isReady]);
 
     const login = useCallback((panValue: string, phoneValue: string) => {
-        const profile = selectProfile(panValue);
+        const normalizedPan = panValue.toUpperCase();
+        const profile = selectProfile(normalizedPan);
         setUser(profile);
-        setPan(panValue.toUpperCase());
+        setPan(normalizedPan);
         setPhone(phoneValue);
+
+        // Record consent
+        setConsent({
+            timestamp: new Date().toISOString(),
+            version: CONSENT_VERSION,
+        });
+
+        // Hash PAN asynchronously for storage
+        hashPAN(normalizedPan).then((hash) => {
+            setPanHash(hash);
+        });
     }, []);
 
     const updateIncome = useCallback(
@@ -132,7 +167,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = useCallback(() => {
         setUser(null);
         setPan("");
+        setPanHash("");
         setPhone("");
+        setConsent(null);
         deleteCookie();
     }, []);
 
@@ -142,8 +179,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 user,
                 isLoggedIn: !!user,
                 pan,
+                panHash,
                 phone,
                 isReady,
+                consent,
                 login,
                 updateIncome,
                 refreshData,

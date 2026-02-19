@@ -11,7 +11,7 @@ function ordinalDay(day: number): string {
 }
 
 export default function SalaryCashFlow({ cashFlow }: SalaryCashFlowProps) {
-    const ratioPct = Math.round(cashFlow.ratio * 100);
+    const ratioPct = cashFlow.ratio;
     const isWarning = ratioPct > 50;
 
     return (
