@@ -77,42 +77,126 @@ const API_ENDPOINTS = [
         path: "/api/health",
         desc: "Health check — returns service status, version, and timestamp.",
         body: null,
-        response: '{ "status": "ok", "service": "ExitDebt API", "version": "1.0.0", "timestamp": "..." }',
+        response: `{
+  "status": "ok",
+  "service": "ExitDebt API",
+  "version": "1.0.0",
+  "timestamp": "2026-02-19T11:00:00.000Z"
+}`,
     },
     {
         method: "GET",
         path: "/api/profiles",
         desc: "Lists all available mock profiles (summary: name, panHash, score, scoreLabel, activeAccounts).",
         body: null,
-        response: '{ "profiles": [{ "name": "Saurabh", "panHash": "abcde1234f", "score": 38, ... }] }',
+        response: `{
+  "profiles": [
+    {
+      "name": "Saurabh",
+      "panHash": "abcde1234f",
+      "score": 38,
+      "scoreLabel": "Critical",
+      "activeAccounts": 3
+    },
+    ...
+  ]
+}`,
     },
     {
         method: "POST",
         path: "/api/profiles",
         desc: "Returns the full profile matched to the given PAN card number.",
-        body: '{ "pan": "ABCDE1234F" }',
-        response: '{ "profile": { "name": "Saurabh", "score": 38, "accounts": [...], ... } }',
+        body: `{
+  "pan": "ABCDE1234F"
+}`,
+        response: `{
+  "profile": {
+    "name": "Saurabh",
+    "score": 38,
+    "scoreLabel": "Critical",
+    "totalOutstanding": 485000,
+    "monthlyEmi": 28500,
+    "accounts": [
+      {
+        "lender": "HDFC Credit Card",
+        "outstanding": 185000,
+        "apr": 42,
+        "type": "credit_card",
+        "emi": 9500,
+        "dueDate": 15
+      },
+      ...
+    ]
+  }
+}`,
     },
     {
         method: "POST",
         path: "/api/calculate/interest-leak",
         desc: "Splits EMI into principal vs interest. Calculates avoidable interest at an optimal rate.",
-        body: '{ "accounts": [...], "totalEmi": 28500, "totalOutstanding": 485000, "optimalRate": 12 }',
-        response: '{ "result": { "totalEmi": 28500, "principal": 24283, "interest": 4217, "avoidable": 1650 } }',
+        body: `{
+  "accounts": [...],
+  "totalEmi": 28500,
+  "totalOutstanding": 485000,
+  "optimalRate": 12
+}`,
+        response: `{
+  "result": {
+    "totalEmi": 28500,
+    "principal": 24283,
+    "interest": 4217,
+    "avoidable": 1650
+  }
+}`,
     },
     {
         method: "POST",
         path: "/api/calculate/prioritizer",
         desc: "Allocates extra payments via avalanche method (highest APR first). Returns per-account amounts and savings.",
-        body: '{ "extraAmount": 10000, "accounts": [...], "optimalRate": 12 }',
-        response: '{ "allocations": [{ "lender": "HDFC CC", "amount": 6000, "savings": 2160 }], "totalSavings": 3600 }',
+        body: `{
+  "extraAmount": 10000,
+  "accounts": [...],
+  "optimalRate": 12
+}`,
+        response: `{
+  "allocations": [
+    {
+      "lender": "HDFC Credit Card",
+      "amount": 6000,
+      "savings": 2160
+    },
+    {
+      "lender": "Bajaj Finserv",
+      "amount": 4000,
+      "savings": 1440
+    }
+  ],
+  "totalSavings": 3600
+}`,
     },
     {
         method: "POST",
         path: "/api/calculate/cashflow",
         desc: "Orders EMIs by due date against salary credit. Returns remaining balance and EMI-to-salary ratio.",
-        body: '{ "salary": 60000, "salaryDate": 5, "accounts": [...] }',
-        response: '{ "result": { "salary": 60000, "salaryDay": 5, "emis": [...], "totalEmi": 28500, "remaining": 31500, "ratio": 0.475 } }',
+        body: `{
+  "salary": 60000,
+  "salaryDate": 5,
+  "accounts": [...]
+}`,
+        response: `{
+  "result": {
+    "salary": 60000,
+    "salaryDay": 5,
+    "emis": [
+      { "day": 10, "lender": "ICICI Loan", "amount": 12000 },
+      { "day": 15, "lender": "HDFC CC", "amount": 9500 },
+      { "day": 20, "lender": "Bajaj EMI", "amount": 7000 }
+    ],
+    "totalEmi": 28500,
+    "remaining": 31500,
+    "ratio": 0.475
+  }
+}`
     },
 ];
 
