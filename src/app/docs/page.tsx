@@ -71,6 +71,51 @@ const DATA_MODELS = [
     },
 ];
 
+const API_ENDPOINTS = [
+    {
+        method: "GET",
+        path: "/api/health",
+        desc: "Health check — returns service status, version, and timestamp.",
+        body: null,
+        response: '{ "status": "ok", "service": "ExitDebt API", "version": "1.0.0", "timestamp": "..." }',
+    },
+    {
+        method: "GET",
+        path: "/api/profiles",
+        desc: "Lists all available mock profiles (summary: name, panHash, score, scoreLabel, activeAccounts).",
+        body: null,
+        response: '{ "profiles": [{ "name": "Saurabh", "panHash": "abcde1234f", "score": 38, ... }] }',
+    },
+    {
+        method: "POST",
+        path: "/api/profiles",
+        desc: "Returns the full profile matched to the given PAN card number.",
+        body: '{ "pan": "ABCDE1234F" }',
+        response: '{ "profile": { "name": "Saurabh", "score": 38, "accounts": [...], ... } }',
+    },
+    {
+        method: "POST",
+        path: "/api/calculate/interest-leak",
+        desc: "Splits EMI into principal vs interest. Calculates avoidable interest at an optimal rate.",
+        body: '{ "accounts": [...], "totalEmi": 28500, "totalOutstanding": 485000, "optimalRate": 12 }',
+        response: '{ "result": { "totalEmi": 28500, "principal": 24283, "interest": 4217, "avoidable": 1650 } }',
+    },
+    {
+        method: "POST",
+        path: "/api/calculate/prioritizer",
+        desc: "Allocates extra payments via avalanche method (highest APR first). Returns per-account amounts and savings.",
+        body: '{ "extraAmount": 10000, "accounts": [...], "optimalRate": 12 }',
+        response: '{ "allocations": [{ "lender": "HDFC CC", "amount": 6000, "savings": 2160 }], "totalSavings": 3600 }',
+    },
+    {
+        method: "POST",
+        path: "/api/calculate/cashflow",
+        desc: "Orders EMIs by due date against salary credit. Returns remaining balance and EMI-to-salary ratio.",
+        body: '{ "salary": 60000, "salaryDate": 5, "accounts": [...] }',
+        response: '{ "result": { "salary": 60000, "salaryDay": 5, "emis": [...], "totalEmi": 28500, "remaining": 31500, "ratio": 0.475 } }',
+    },
+];
+
 /* ───── Page Component ───── */
 
 export default function DocsPage() {
@@ -101,7 +146,7 @@ export default function DocsPage() {
                 <div className="rounded-2xl p-6 mb-12" style={{ backgroundColor: "var(--color-bg-card)", border: "1px solid var(--color-border)" }}>
                     <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "var(--color-text-muted)" }}>On this page</p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {["User Flow", "Design System", "Components", "Calculations", "Data Models", "Tech Stack"].map((s) => (
+                        {["User Flow", "API Endpoints", "Design System", "Components", "Calculations", "Data Models", "Tech Stack"].map((s) => (
                             <a key={s} href={`#${s.toLowerCase().replace(/ /g, "-")}`} className="text-sm font-medium px-3 py-2 rounded-lg transition-colors" style={{ color: "var(--color-purple)" }}>
                                 {s}
                             </a>
@@ -220,6 +265,40 @@ export default function DocsPage() {
                                             <code className="text-xs" style={{ color: "var(--color-text-secondary)" }}>{f}</code>
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* ── API Endpoints ── */}
+                <section id="api-endpoints" className="mb-16">
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: "var(--color-text-primary)" }}>API Endpoints</h2>
+                    <p className="text-sm mb-6" style={{ color: "var(--color-text-secondary)" }}>
+                        Next.js Route Handlers at <code className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: "var(--color-bg-soft)", color: "var(--color-purple)" }}>app/api/</code>. All responses are JSON.
+                    </p>
+
+                    <div className="space-y-4">
+                        {API_ENDPOINTS.map((ep) => (
+                            <div key={ep.method + ep.path} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--color-border)" }}>
+                                <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: "var(--color-bg-soft)" }}>
+                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white ${ep.method === "GET" ? "bg-blue" : "bg-purple"}`}>
+                                        {ep.method}
+                                    </span>
+                                    <code className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>{ep.path}</code>
+                                </div>
+                                <div className="px-5 py-4 space-y-3" style={{ backgroundColor: "var(--color-bg-card)" }}>
+                                    <p className="text-xs" style={{ color: "var(--color-text-secondary)" }}>{ep.desc}</p>
+                                    {ep.body && (
+                                        <div>
+                                            <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Request Body</p>
+                                            <pre className="text-xs p-3 rounded-lg overflow-x-auto" style={{ backgroundColor: "var(--color-bg-soft)", color: "var(--color-text-primary)" }}>{ep.body}</pre>
+                                        </div>
+                                    )}
+                                    <div>
+                                        <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: "var(--color-text-muted)" }}>Response</p>
+                                        <pre className="text-xs p-3 rounded-lg overflow-x-auto" style={{ backgroundColor: "var(--color-bg-soft)", color: "var(--color-text-primary)" }}>{ep.response}</pre>
+                                    </div>
                                 </div>
                             </div>
                         ))}
