@@ -73,130 +73,211 @@ const DATA_MODELS = [
 
 const API_ENDPOINTS = [
     {
-        method: "GET",
-        path: "/api/health",
-        desc: "Health check — returns service status, version, and timestamp.",
-        body: null,
+        method: "POST",
+        path: "/api/otp/send",
+        desc: "Send OTP to an Indian mobile number. In production, integrates with SMS gateway (MSG91/Twilio).",
+        body: `{
+  "phone": "9876543210"
+}`,
         response: `{
-  "status": "ok",
-  "service": "ExitDebt API",
-  "version": "1.0.0",
-  "timestamp": "2026-02-19T11:00:00.000Z"
+  "success": true,
+  "message": "OTP sent successfully.",
+  "expiresIn": 300
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/otp/verify",
+        desc: "Verify the 6-digit OTP code sent to the phone number.",
+        body: `{
+  "phone": "9876543210",
+  "otp": "123456"
+}`,
+        response: `{
+  "success": true,
+  "verified": true,
+  "message": "Phone number verified successfully."
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/health-check",
+        desc: "Submit PAN + phone → trigger CIBIL pull → return parsed debt health results with score breakdown, savings, interest leak, and cash flow.",
+        body: `{
+  "pan": "ABCDE1234F",
+  "phone": "9876543210",
+  "consent": {
+    "timestamp": "2026-02-19T16:52:00Z",
+    "version": "1.0"
+  }
+}`,
+        response: `{
+  "success": true,
+  "id": "hc_1708367520_abc123",
+  "profile": {
+    "name": "Saurabh",
+    "score": 40,
+    "scoreLabel": "Needs Attention",
+    "scoreBreakdown": { "dti": 20, "interestRate": 10, ... }
+  },
+  "savings": { "totalAnnual": 87120, "breakdown": [...] },
+  "interestLeak": { "totalEmi": 28400, "avoidable": 5217 },
+  "cashFlow": { "remaining": 31600, "ratio": 47 }
 }`,
     },
     {
         method: "GET",
-        path: "/api/profiles",
-        desc: "Lists all available mock profiles (summary: name, panHash, score, scoreLabel, activeAccounts).",
+        path: "/api/health-check/:id",
+        desc: "Get results for a completed health check by ID. Results auto-expire after 30 days.",
         body: null,
         response: `{
-  "profiles": [
-    {
-      "name": "Saurabh",
-      "panHash": "abcde1234f",
-      "score": 38,
-      "scoreLabel": "Critical",
-      "activeAccounts": 3
+  "success": true,
+  "id": "hc_1708367520_abc123",
+  "createdAt": "2026-02-19T16:52:00Z",
+  "expiresAt": "2026-03-21T16:52:00Z",
+  "profile": { ... },
+  "savings": { ... }
+}`,
     },
+    {
+        method: "POST",
+        path: "/api/callback",
+        desc: "Book a callback with time preference. Creates a CRM lead in production.",
+        body: `{
+  "phone": "9876543210",
+  "timeSlot": "Morning (10am – 12pm)",
+  "name": "Saurabh"
+}`,
+        response: `{
+  "success": true,
+  "bookingId": "cb_1708367520_ab12",
+  "scheduledSlot": "Morning (10am – 12pm)",
+  "message": "Callback booked successfully."
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/subscription/purchase",
+        desc: "Initiate UPI payment for ₹999/year subscription. Returns a payment link (Razorpay/Cashfree in production).",
+        body: `{
+  "userId": "user_123",
+  "plan": "annual"
+}`,
+        response: `{
+  "success": true,
+  "subscriptionId": "sub_1708367520_xyz",
+  "amount": 999,
+  "currency": "INR",
+  "paymentLink": "https://pay.exitdebt.com/sub_...",
+  "expiresIn": 900
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/subscription/status",
+        desc: "Check subscription status (trial / active / expired) and available features.",
+        body: null,
+        response: `{
+  "success": true,
+  "status": "trial",
+  "daysRemaining": 7,
+  "features": {
+    "healthCheck": true,
+    "dashboardBasic": true,
+    "dashboardAdvanced": false,
+    "lenderOffers": false
+  }
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/aa/consent",
+        desc: "Initiate Account Aggregator consent flow for data linking. Integrates with Setu/OneMoney/Finvu in production.",
+        body: `{
+  "userId": "user_123",
+  "phone": "9876543210"
+}`,
+        response: `{
+  "success": true,
+  "consentId": "aa_1708367520_xyz",
+  "status": "PENDING",
+  "redirectUrl": "https://aa.exitdebt.com/consent/...",
+  "dataTypes": ["DEPOSIT", "CREDIT_CARD", "LOAN"]
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/aa/fetch",
+        desc: "Fetch latest data from Account Aggregator after consent is approved.",
+        body: null,
+        response: `{
+  "success": true,
+  "status": "NO_CONSENT",
+  "data": null,
+  "message": "Initiate consent via POST /api/aa/consent first."
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/dashboard/:userId",
+        desc: "Get full dashboard data — Freedom GPS, Interest Leak, Payment Prioritizer, Cash Flow, Health Score, and accounts.",
+        body: null,
+        response: `{
+  "success": true,
+  "profile": { "name": "Saurabh", "score": 40, ... },
+  "freedomGPS": {
+    "currentTimeline": "4y 3mo",
+    "optimizedTimeline": "3y 4mo",
+    "timelineSaved": "11 months sooner"
+  },
+  "interestLeak": { ... },
+  "cashFlow": { ... },
+  "prioritizer": { "extraAmount": 5000, "allocations": [...] },
+  "savings": { "totalAnnual": 87120 }
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/dashboard/sales/:userId",
+        desc: "Sales-only: full dashboard + 12-month outstanding trends + lender consolidation offers. Internal use only.",
+        body: null,
+        response: `{
+  "success": true,
+  "salesView": true,
+  "profile": { ... },
+  "trends": [
+    { "month": "Jan", "outstanding": 624000, "interestPaid": 5217 },
     ...
+  ],
+  "lenderOffers": [
+    {
+      "currentLender": "HDFC CC",
+      "currentRate": 42,
+      "offeredRate": 13,
+      "offeredBy": "SBI",
+      "monthlySaving": 3792
+    }
   ]
 }`,
     },
     {
         method: "POST",
-        path: "/api/profiles",
-        desc: "Returns the full profile matched to the given PAN card number.",
-        body: `{
-  "pan": "ABCDE1234F"
-}`,
-        response: `{
-  "profile": {
-    "name": "Saurabh",
-    "score": 38,
-    "scoreLabel": "Critical",
-    "totalOutstanding": 485000,
-    "monthlyEmi": 28500,
-    "accounts": [
-      {
-        "lender": "HDFC Credit Card",
-        "outstanding": 185000,
-        "apr": 42,
-        "type": "credit_card",
-        "emi": 9500,
-        "dueDate": 15
-      },
-      ...
-    ]
-  }
-}`,
-    },
-    {
-        method: "POST",
-        path: "/api/calculate/interest-leak",
-        desc: "Splits EMI into principal vs interest. Calculates avoidable interest at an optimal rate.",
-        body: `{
-  "accounts": [...],
-  "totalEmi": 28500,
-  "totalOutstanding": 485000,
-  "optimalRate": 12
-}`,
-        response: `{
-  "result": {
-    "totalEmi": 28500,
-    "principal": 24283,
-    "interest": 4217,
-    "avoidable": 1650
-  }
-}`,
-    },
-    {
-        method: "POST",
-        path: "/api/calculate/prioritizer",
-        desc: "Allocates extra payments via avalanche method (highest APR first). Returns per-account amounts and savings.",
+        path: "/api/prioritizer/calculate",
+        desc: "Calculate optimal payment allocation for a given extra amount using the avalanche method (highest APR first).",
         body: `{
   "extraAmount": 10000,
   "accounts": [...],
   "optimalRate": 12
 }`,
         response: `{
+  "success": true,
+  "method": "avalanche",
   "allocations": [
-    {
-      "lender": "HDFC Credit Card",
-      "amount": 6000,
-      "savings": 2160
-    },
-    {
-      "lender": "Bajaj Finserv",
-      "amount": 4000,
-      "savings": 1440
-    }
+    { "lender": "HDFC Credit Card", "amount": 6000, "savings": 2160 },
+    { "lender": "Bajaj Finserv", "amount": 4000, "savings": 1440 }
   ],
   "totalSavings": 3600
 }`,
-    },
-    {
-        method: "POST",
-        path: "/api/calculate/cashflow",
-        desc: "Orders EMIs by due date against salary credit. Returns remaining balance and EMI-to-salary ratio.",
-        body: `{
-  "salary": 60000,
-  "salaryDate": 5,
-  "accounts": [...]
-}`,
-        response: `{
-  "result": {
-    "salary": 60000,
-    "salaryDay": 5,
-    "emis": [
-      { "day": 10, "lender": "ICICI Loan", "amount": 12000 },
-      { "day": 15, "lender": "HDFC CC", "amount": 9500 },
-      { "day": 20, "lender": "Bajaj EMI", "amount": 7000 }
-    ],
-    "totalEmi": 28500,
-    "remaining": 31500,
-    "ratio": 0.475
-  }
-}`
     },
 ];
 
