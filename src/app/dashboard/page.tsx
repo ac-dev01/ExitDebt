@@ -20,17 +20,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export default function DashboardPage() {
-    const { user, isLoggedIn } = useAuth();
+    const { user, isLoggedIn, isReady } = useAuth();
     const router = useRouter();
     const [lastUpdated, setLastUpdated] = useState(new Date());
 
     useEffect(() => {
-        if (!isLoggedIn) {
+        if (isReady && !isLoggedIn) {
             router.push("/");
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, isReady, router]);
 
-    if (!isLoggedIn || !user) return null;
+    if (!isReady || !isLoggedIn || !user) return null;
 
     const interestLeak = calculateInterestLeak(
         user.accounts,

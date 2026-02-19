@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function Navbar() {
-    const { isLoggedIn, logout } = useAuth();
+    const { isLoggedIn, user, logout } = useAuth();
 
     function handleSignOut() {
         logout();
@@ -47,11 +47,27 @@ export default function Navbar() {
                             Dashboard
                         </Link>
                         <Link
+                            href="/schedule"
+                            className="text-sm font-medium transition-colors hidden sm:block"
+                            style={{ color: "var(--color-text-secondary)" }}
+                        >
+                            Schedule
+                        </Link>
+                        <Link
                             href="/docs"
-                            className="text-sm font-medium transition-colors"
+                            className="text-sm font-medium transition-colors hidden sm:block"
                             style={{ color: "var(--color-text-secondary)" }}
                         >
                             Docs
+                        </Link>
+                        {/* Profile avatar */}
+                        <Link
+                            href="/profile"
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white transition-opacity hover:opacity-80"
+                            style={{ backgroundColor: "var(--color-purple)" }}
+                            title="Profile"
+                        >
+                            {user?.name?.charAt(0) || "U"}
                         </Link>
                         <button
                             onClick={handleSignOut}
@@ -78,11 +94,11 @@ export default function Navbar() {
                             Security
                         </Link>
                         <Link
-                            href="/#articles"
+                            href="/faq"
                             className="text-sm font-medium transition-colors hidden sm:block"
                             style={{ color: "var(--color-text-secondary)" }}
                         >
-                            Articles
+                            FAQ
                         </Link>
                         <Link
                             href="/docs"

@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/AuthContext";
 import Navbar from "@/components/Navbar";
 
 export default function IncomePage() {
-    const { user, isLoggedIn, updateIncome } = useAuth();
+    const { user, isLoggedIn, isReady, updateIncome } = useAuth();
     const router = useRouter();
 
     const [salary, setSalary] = useState("");
@@ -17,10 +17,10 @@ export default function IncomePage() {
     const [touched, setTouched] = useState<{ salary?: boolean; salaryDate?: boolean }>({});
 
     useEffect(() => {
-        if (!isLoggedIn) {
+        if (isReady && !isLoggedIn) {
             router.push("/");
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, isReady, router]);
 
     useEffect(() => {
         if (user) {
@@ -29,7 +29,7 @@ export default function IncomePage() {
         }
     }, [user]);
 
-    if (!isLoggedIn || !user) return null;
+    if (!isReady || !isLoggedIn || !user) return null;
 
     const salaryNum = parseInt(salary.replace(/,/g, ""), 10);
     const dateNum = parseInt(salaryDate, 10);
