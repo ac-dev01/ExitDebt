@@ -46,6 +46,13 @@ export default function Navbar() {
                         >
                             Dashboard
                         </Link>
+                        <Link
+                            href="/docs"
+                            className="text-sm font-medium transition-colors"
+                            style={{ color: "var(--color-text-secondary)" }}
+                        >
+                            Docs
+                        </Link>
                         <button
                             onClick={handleSignOut}
                             className="text-sm font-medium transition-colors cursor-pointer hover:text-red-500"
@@ -76,6 +83,13 @@ export default function Navbar() {
                             style={{ color: "var(--color-text-secondary)" }}
                         >
                             Articles
+                        </Link>
+                        <Link
+                            href="/docs"
+                            className="text-sm font-medium transition-colors hidden sm:block"
+                            style={{ color: "var(--color-text-secondary)" }}
+                        >
+                            Docs
                         </Link>
                         <Link
                             href="/#start"
