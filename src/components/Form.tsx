@@ -91,7 +91,7 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
                     placeholder="ABCDE1234F"
                     maxLength={10}
                     aria-describedby="pan-error"
-                    className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-300 text-sm transition-all focus:outline-none focus:ring-2 focus:border-transparent ${panError ? "border-red-300 bg-red-50/30 focus:ring-red-300" : "border-gray-200 bg-gray-50/50 focus:ring-[#0047AB]/30"
+                    className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-300 text-sm transition-all focus:outline-none focus:ring-2 focus:border-transparent ${panError ? "border-red-300 bg-red-50/30 focus:ring-red-300" : "border-gray-200 bg-gray-50/50 focus:ring-[#00CAC7]/30"
                         }`}
                 />
                 {panError && (
@@ -111,7 +111,7 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
                     placeholder="9876543210"
                     maxLength={10}
                     aria-describedby="phone-error"
-                    className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-300 text-sm transition-all focus:outline-none focus:ring-2 focus:border-transparent ${phoneError ? "border-red-300 bg-red-50/30 focus:ring-red-300" : "border-gray-200 bg-gray-50/50 focus:ring-[#0047AB]/30"
+                    className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-300 text-sm transition-all focus:outline-none focus:ring-2 focus:border-transparent ${phoneError ? "border-red-300 bg-red-50/30 focus:ring-red-300" : "border-gray-200 bg-gray-50/50 focus:ring-[#00CAC7]/30"
                         }`}
                 />
                 {phoneError && (
@@ -128,11 +128,11 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
                         setConsent(e.target.checked);
                         if (e.target.checked) setConsentError("");
                     }}
-                    className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-[#0047AB]"
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-[#00CAC7]"
                 />
                 <label htmlFor="consent" className="text-xs text-gray-500 leading-relaxed">
                     I agree to the{" "}
-                    <a href="#" className="underline underline-offset-2" style={{ color: "var(--cobalt)" }}>
+                    <a href="#" className="underline underline-offset-2" style={{ color: "var(--accent-teal)" }}>
                         Privacy Policy
                     </a>{" "}
                     and consent to ExitDebt accessing my credit information for this assessment.
@@ -147,8 +147,8 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
                 disabled={isLoading}
                 className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 style={{
-                    backgroundColor: "var(--cobalt)",
-                    color: "white",
+                    backgroundColor: "var(--accent-lime)",
+                    color: "var(--ink)",
                 }}
             >
                 Check your debt health →

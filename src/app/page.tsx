@@ -23,7 +23,7 @@ const STEPS = [
   {
     num: "03",
     title: "See the full picture",
-    desc: <>Every loan, every card — with interest rates and what they{"'re"} really <span style={{ color: "var(--danger)", fontWeight: 600 }}>costing you</span>.</>,
+    desc: <>Every loan, every card — with interest rates and what they{"'re"} really <span style={{ color: "var(--color-danger)", fontWeight: 600 }}>costing you</span>.</>,
   },
 ];
 
@@ -46,7 +46,7 @@ const ARTICLES = [
     slug: "credit-card-mistakes",
     title: "5 mistakes people make with credit cards",
     category: "Credit Cards",
-    desc: <>Most people don{"'t"} realise how much revolving credit actually <span style={{ color: "var(--danger)", fontWeight: 600 }}>costs them</span>.</>,
+    desc: <>Most people don{"'t"} realise how much revolving credit actually <span style={{ color: "var(--color-danger)", fontWeight: 600 }}>costs them</span>.</>,
   },
   {
     slug: "priya-saved-62k",
@@ -56,7 +56,7 @@ const ARTICLES = [
   },
   {
     slug: "personal-loan-vs-credit-card",
-    title: <>Personal loan vs. <span style={{ color: "var(--danger)" }}>credit card debt</span>: which to pay first?</>,
+    title: <>Personal loan vs. <span style={{ color: "var(--color-danger)" }}>credit card debt</span>: which to pay first?</>,
     category: "Strategy",
     desc: "The answer isn't always obvious. Here's a framework to decide.",
   },
@@ -89,44 +89,47 @@ export default function Home() {
     login(p);
     setIsLoading(false);
     setSubmitted(true);
-    router.push("/report");
+    router.push("/income");
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--color-bg)" }}>
       <Navbar />
 
       {/* ───────────────── HERO ───────────────── */}
-      <section id="start" style={{ backgroundColor: "var(--bg-soft)" }}>
+      <section id="start" style={{ backgroundColor: "var(--color-bg-soft)" }}>
         <div className="max-w-6xl mx-auto px-8 py-20 lg:py-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left — Headline */}
             <div className="lg:col-span-7 animate-fadeIn">
               <div
                 className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-6"
-                style={{ backgroundColor: "rgba(0,71,171,0.1)", color: "var(--cobalt)" }}
+                style={{ backgroundColor: "rgba(115,0,190,0.08)", color: "var(--color-purple)" }}
               >
                 Free debt health check
               </div>
 
               <h1
                 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold leading-[1.15] tracking-tight mb-6"
-                style={{ color: "var(--navy)" }}
+                style={{ color: "var(--color-text-primary)" }}
               >
                 Find out if you&apos;re{" "}
                 <span
                   className="relative inline-block"
-                  style={{ color: "var(--danger)" }}
+                  style={{ color: "var(--color-danger)" }}
                 >
                   overpaying
                   <svg className="absolute -bottom-1 left-0 w-full" height="6" viewBox="0 0 200 6" fill="none">
-                    <path d="M0 3C40 0.5 80 5 120 2.5C160 0 200 4 200 3" stroke="#DC3545" strokeWidth="3" strokeLinecap="round" />
+                    <path d="M0 3C40 0.5 80 5 120 2.5C160 0 200 4 200 3" stroke="#DC2626" strokeWidth="3" strokeLinecap="round" />
                   </svg>
                 </span>{" "}
                 on your loans.
               </h1>
 
-              <p className="text-lg text-gray-500 leading-relaxed max-w-lg mb-8">
+              <p
+                className="text-lg leading-relaxed max-w-lg mb-8"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
                 Enter your PAN and we&apos;ll pull your credit report. You&apos;ll see
                 exactly where your money is going — in 30 seconds.
               </p>
@@ -136,10 +139,15 @@ export default function Home() {
                 {["No CIBIL impact", "256-bit encrypted", "Free forever"].map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-gray-100 text-gray-500"
-                    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{
+                      backgroundColor: "var(--color-bg-card)",
+                      border: "1px solid var(--color-border)",
+                      color: "var(--color-text-secondary)",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                    }}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--cobalt)" }} />
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "var(--color-purple)" }} />
                     {t}
                   </span>
                 ))}
@@ -150,31 +158,41 @@ export default function Home() {
             <div className="lg:col-span-5 animate-slideUp stagger-1">
               <div
                 ref={formCardRef}
-                className="bg-white rounded-2xl p-7 sm:p-8"
-                style={{ boxShadow: "0 4px 32px rgba(0,0,0,0.06)" }}
+                className="rounded-2xl p-7 sm:p-8"
+                style={{
+                  backgroundColor: "var(--color-bg-card)",
+                  boxShadow: "0 4px 32px rgba(0,0,0,0.06)",
+                }}
               >
-                <h2 className="text-lg font-bold text-gray-900 mb-1">Check your debt health</h2>
-                <p className="text-sm text-gray-400 mb-6">Takes 30 seconds. Completely free.</p>
+                <h2
+                  className="text-lg font-bold mb-1"
+                  style={{ color: "var(--color-text-primary)" }}
+                >
+                  Check your debt health
+                </h2>
+                <p className="text-sm mb-6" style={{ color: "var(--color-text-muted)" }}>
+                  Takes 30 seconds. Completely free.
+                </p>
 
                 {isLoggedIn && user ? (
                   <div className="text-center space-y-5 py-6">
                     <div
                       className="w-14 h-14 rounded-full mx-auto flex items-center justify-center text-xl font-bold text-white"
-                      style={{ backgroundColor: "var(--cobalt)" }}
+                      style={{ backgroundColor: "var(--color-purple)" }}
                     >
                       {user.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">
-                        Welcome back, <span className="font-semibold text-gray-900">{user.name}</span>
+                      <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>
+                        Welcome back, <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>{user.name}</span>
                       </p>
                     </div>
                     <Link
-                      href="/report"
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90"
-                      style={{ backgroundColor: "var(--cobalt)", color: "white" }}
+                      href="/dashboard"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
+                      style={{ backgroundColor: "var(--color-purple)" }}
                     >
-                      View your report
+                      View your dashboard
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                       </svg>
@@ -197,10 +215,13 @@ export default function Home() {
       {/* ───────────────── HOW IT WORKS ───────────────── */}
       <section id="steps" className="max-w-6xl mx-auto px-8 py-20 lg:py-24">
         <div className="text-center mb-14 animate-fadeIn">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--cobalt)" }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--color-purple)" }}>
             How it works
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ color: "var(--color-text-primary)" }}
+          >
             Three steps to clarity
           </h2>
         </div>
@@ -209,17 +230,28 @@ export default function Home() {
           {STEPS.map((step, i) => (
             <div
               key={step.num}
-              className={`relative bg-white rounded-2xl p-8 hover-lift animate-slideUp stagger-${i + 1}`}
-              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.04)", border: "1px solid #f3f4f6" }}
+              className={`relative rounded-2xl p-8 hover-lift animate-slideUp stagger-${i + 1}`}
+              style={{
+                backgroundColor: "var(--color-bg-card)",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
+                border: "1px solid var(--color-border)",
+              }}
             >
               <span
                 className="text-4xl font-black"
-                style={{ color: "var(--sky)" }}
+                style={{ color: "var(--color-blue)" }}
               >
                 {step.num}
               </span>
-              <h3 className="text-base font-bold text-gray-900 mt-4 mb-2">{step.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+              <h3
+                className="text-base font-bold mt-4 mb-2"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                {step.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                {step.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -228,10 +260,13 @@ export default function Home() {
       {/* ───────────────── TRUST BAND ───────────────── */}
       <section id="trust" className="max-w-6xl mx-auto px-8 py-20 lg:py-24">
         <div className="text-center mb-14">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--cobalt)" }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--color-purple)" }}>
             Your data is safe
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: "var(--navy)" }}>
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ color: "var(--color-text-primary)" }}
+          >
             Things you should know
           </h2>
         </div>
@@ -240,12 +275,23 @@ export default function Home() {
           {TRUST_POINTS.map((point, i) => (
             <div
               key={point.title}
-              className={`bg-white rounded-2xl p-7 hover-lift animate-fadeIn stagger-${i + 1}`}
-              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.04)", border: "1px solid #f3f4f6" }}
+              className={`rounded-2xl p-7 hover-lift animate-fadeIn stagger-${i + 1}`}
+              style={{
+                backgroundColor: "var(--color-bg-card)",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
+                border: "1px solid var(--color-border)",
+              }}
             >
-              <span className="text-2xl" style={{ color: "var(--cobalt)" }}>{TRUST_ICONS[point.icon]}</span>
-              <h3 className="text-sm font-bold mt-4 mb-2" style={{ color: "var(--navy)" }}>{point.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{point.desc}</p>
+              <span style={{ color: "var(--color-purple)" }}>{TRUST_ICONS[point.icon]}</span>
+              <h3
+                className="text-sm font-bold mt-4 mb-2"
+                style={{ color: "var(--color-text-primary)" }}
+              >
+                {point.title}
+              </h3>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                {point.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -254,10 +300,13 @@ export default function Home() {
       {/* ───────────────── ARTICLES ───────────────── */}
       <section id="articles" className="max-w-6xl mx-auto px-8 py-20 lg:py-24">
         <div className="text-center mb-14 animate-fadeIn">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--cobalt)" }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--color-purple)" }}>
             Learn more
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ color: "var(--color-text-primary)" }}
+          >
             Understand how debt really works
           </h2>
         </div>
@@ -267,20 +316,29 @@ export default function Home() {
             <Link
               key={article.slug}
               href={`/articles/${article.slug}`}
-              className={`group bg-white rounded-2xl p-7 hover-lift animate-slideUp stagger-${i + 1}`}
-              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.04)", border: "1px solid #f3f4f6" }}
+              className={`group rounded-2xl p-7 hover-lift animate-slideUp stagger-${i + 1}`}
+              style={{
+                backgroundColor: "var(--color-bg-card)",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
+                border: "1px solid var(--color-border)",
+              }}
             >
               <span
-                className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider mb-4"
-                style={{ backgroundColor: "var(--cobalt)", color: "white" }}
+                className="inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider text-white mb-4"
+                style={{ backgroundColor: "var(--color-purple)" }}
               >
                 {article.category}
               </span>
-              <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">
+              <h3
+                className="text-base font-bold mb-2 transition-colors"
+                style={{ color: "var(--color-text-primary)" }}
+              >
                 {article.title}
               </h3>
-              <p className="text-sm text-gray-400 leading-relaxed">{article.desc}</p>
-              <div className="mt-5 flex items-center gap-1 text-sm font-semibold" style={{ color: "var(--cobalt)" }}>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                {article.desc}
+              </p>
+              <div className="mt-5 flex items-center gap-1 text-sm font-semibold" style={{ color: "var(--color-purple)" }}>
                 Read more
                 <svg className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />

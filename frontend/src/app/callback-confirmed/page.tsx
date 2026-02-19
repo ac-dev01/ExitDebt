@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import PrimaryButton from '@/components/PrimaryButton';
 
 export default function CallbackConfirmedPage() {
     return (
@@ -26,11 +25,12 @@ export default function CallbackConfirmedPage() {
                             </div>
                         ))}
                     </div>
-                    <Link href="/">
-                        <PrimaryButton className="w-full">Back to Home</PrimaryButton>
+                    <Link href="/" className="w-full inline-block px-6 py-3 rounded-xl text-white text-sm font-semibold bg-blue-600 hover:bg-blue-700 transition-colors text-center">
+                        Back to Home
                     </Link>
                 </div>
             </div>
         </main>
     );
 }
+

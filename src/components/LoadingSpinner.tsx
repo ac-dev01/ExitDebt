@@ -7,7 +7,7 @@ export default function LoadingSpinner() {
                 <div className="w-12 h-12 rounded-full border-[3px] border-gray-100" />
                 <div
                     className="absolute inset-0 w-12 h-12 rounded-full border-[3px] border-transparent animate-spin"
-                    style={{ borderTopColor: "var(--cobalt)" }}
+                    style={{ borderTopColor: "var(--accent-teal)" }}
                 />
             </div>
             <div className="text-center">
