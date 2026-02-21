@@ -1,7 +1,7 @@
 """Debt Account model."""
 
 import uuid
-from sqlalchemy import Column, String, Float, ForeignKey
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
