@@ -1,17 +1,17 @@
 # ExitDebt — Product Requirements Document (PRD)
 
-> **Version:** 2.0 | **Date:** 2026-02-18 | **Author:** Kumar R Anand + ARIA
+> **Version:** 3.0 | **Date:** 2026-02-21 | **Author:** Kumar R Anand + ARIA
 > **Status:** Draft — Pending Dev Team Review
-> **Companion Doc:** [STRATEGY.md](file:///c:/Users/ASUS/Desktop/ventures/Aaditri-Technologies/ExitDebt/STRATEGY.md)
+> **Companion Doc:** [STRATEGY.md](./STRATEGY.md)
 
 ---
 
 ## 1. Product Overview
 
-**ExitDebt** is a web-based **debt intelligence platform** that helps salaried Indians understand, track, and optimize their debt. Users input their PAN and phone number, get an instant CIBIL-powered debt health assessment with unique intelligence tools (Freedom GPS, Interest Leak Report, Payment Prioritizer), and get 3 months of free access. After trial, users subscribe at **₹999/year** for ongoing monitoring via Account Aggregator. Separately, the sales team proactively calls high-scare-score users to facilitate consolidation loans.
+**ExitDebt** is a web-based **full-spectrum debt platform** that helps salaried Indians understand, track, optimize, and resolve their debt. Users input their PAN and phone number, get an instant CIBIL-powered debt health assessment with unique intelligence tools (Freedom GPS, Interest Leak Report, Payment Prioritizer), and get 3 months of free access. After trial, users subscribe to **Lite (₹499/month or ₹4,999/year)** for ongoing monitoring, upgrade to **Shield (₹1,999/month or ₹14,999/year)** for harassment protection + creditor negotiation, or engage **Debt Settlement (10% + GST on settled debt, ₹1L+ minimum)**.
 
 ### Business Objective
-Generate revenue through **₹999/year subscriptions** (recurring) and **lender commissions** (1–3% on consolidation loans facilitated by sales team).
+Generate revenue through **tiered subscriptions** (Lite + Shield), **settlement fees** (10% + GST), and **lender commissions** (Phase 2 — 0.5–3% on consolidation loans facilitated by sales team via DSA partnerships).
 
 ### Key Constraint
 - **3-person dev team**, 13-week build to soft launch
@@ -25,15 +25,29 @@ Generate revenue through **₹999/year subscriptions** (recurring) and **lender 
 ### 2.1 End-to-End Flow
 
 ```
-┌─────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ LANDING  │───▶│ ONBOARD  │───▶│ FULL     │───▶│ 3-MONTH  │───▶│ ₹999/yr  │
-│  PAGE    │    │  FLOW    │    │ DASHBOARD│    │  TRIAL   │    │  SUBSCRIBE│
-└─────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
-  Awareness      PAN + Phone     All tools      Free access     Ongoing
-  + Trust        + Consent       instantly       + AA setup      monitoring
+┌─────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+│ LANDING  │──▶│ ONBOARD  │──▶│ FULL     │──▶│ 3-MONTH  │──▶│ TIER     │
+│  PAGE    │   │  FLOW    │   │ DASHBOARD│   │  TRIAL   │   │ SELECTION│
+└─────────┘   └──────────┘   └──────────┘   └──────────┘   └────┬─────┘
+  Awareness     PAN + Phone    All 7 tools    Free Lite         │
+  + Trust       + Consent      instantly      access            │
+                                                                │
+              ┌─────────────────────┬───────────────────┐       │
+              ▼                     ▼                   ▼       │
+        ┌───────────┐       ┌─────────────┐     ┌────────────┐  │
+        │   LITE    │       │   SHIELD    │     │ SETTLEMENT │  │
+        │ ₹499/mo   │       │ ₹1,999/mo   │     │ 10% + GST  │◀─┘
+        │           │       │             │     │ (₹1L+ min) │
+        │ Dashboard │       │ Lite +      │     │            │
+        │ + tools   │       │ Harassment  │     │ Full debt  │
+        │ + AA data │       │ protection  │     │ negotiation│
+        │           │       │ + Creditor  │     │ + one-time │
+        │           │       │   comms     │     │ resolution │
+        └───────────┘       └─────────────┘     └────────────┘
 
-  ┌──────────────────────────── PARALLEL ────────────────────────────┐
-  │  Sales team calls high-scare-score users → consolidation loan   │
+  ┌──────────────────────── PARALLEL (Sales) ────────────────────────┐
+  │  Phase 1: Team calls low-score users → Shield/Settlement upsell │
+  │  Phase 2: DSA lending → consolidation loans (0.5–3% commission) │
   └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,7 +82,7 @@ Generate revenue through **₹999/year subscriptions** (recurring) and **lender 
 │  └──────────┘  └──────────┘  └──────────┘                │
 │                                                            │
 │  TRUST SIGNALS                                             │
-│  • "Free for 3 months. Then ₹999/year."                     │
+│  • "Free for 3 months. Then Lite ₹499/month."                  │
 │  • "Your data is encrypted & never shared without consent"│
 │  • "10,000+ health checks completed" (after traction)     │
 │                                                            │
@@ -89,8 +103,8 @@ Generate revenue through **₹999/year subscriptions** (recurring) and **lender 
 - No clutter. No stock images. Clean typography (Inter).
 - FAQ must address the trust gap ("Is this a scam?")
 - Mobile-first responsive design
-- "Free for 3 months. Then ₹999/year." — prominent, clean pricing
-- Lender commissions and lead partnerships disclosed in Privacy Policy and Terms of Service, not on the landing page
+- "Free for 3 months. Then Lite ₹499/month or ₹4,999/year. Shield from ₹1,999/month." — prominent, clean pricing
+- Settlement services and commission arrangements disclosed in Privacy Policy and Terms of Service, not on the landing page
 
 **Functional Requirements:**
 
@@ -272,13 +286,19 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 │   Your full debt intelligence dashboard is ready.          │
 │   You have 3 months of free access.                        │
 │                                                            │
-│   What's included:                                         │
+│   What's included (Lite — free for 3 months):              │
 │   • Debt Freedom GPS — your debt-free countdown            │
 │   • Interest Leak Report — see where money is wasted       │
 │   • Smart Payment Prioritizer — optimize extra payments    │
 │   • Salary Day Cash Flow — see what's left after EMIs      │
+│   • Credit Score Impact Predictor                          │
 │                                                            │
 │   [Go to My Dashboard →]                                   │
+│                                                            │
+│   Need more help?                                          │
+│   🛡️ Shield — Harassment protection + creditor negotiation │
+│   💰 Settlement — We negotiate debt reduction for you      │
+│   [Learn about our services →]                             │
 │                                                            │
 │   Meanwhile, learn more:                                   │
 │   • How debt restructuring works →                        │
@@ -291,8 +311,68 @@ User enters phone → [ Send OTP ] → 6-digit OTP sent via SMS
 | ID | Requirement | Priority |
 |----|------------|----------|
 | PS-01 | Welcome message with user's first name | P0 |
-| PS-02 | Feature highlights with dashboard CTA | P0 |
-| PS-03 | Content links for engagement | P1 |
+| PS-02 | Feature highlights with dashboard CTA (Lite features) | P0 |
+| PS-03 | Shield/Settlement awareness links (not in-your-face upsell) | P1 |
+| PS-04 | Content links for engagement | P1 |
+
+---
+
+#### Screen 5: Subscription Tier Selection (Paywall)
+
+**Purpose:** Present subscription options when trial expires or user clicks "Upgrade". Clean comparison. No pressure.
+
+**Triggers:** Trial expiration (blocks dashboard access), "Upgrade" button from dashboard, "Learn about our services" link.
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  [ExitDebt Logo]                                    Hi, Saurabh  │
+│                                                                    │
+│   Your free trial ends in X days. Choose your plan:               │
+│                                                                    │
+│   [ Monthly ○ ]  [ Annual ● — save up to 37% ]                   │
+│                                                                    │
+│   ┌──────────────┐  ┌───────────────┐  ┌───────────────────────┐  │
+│   │  LITE        │  │  SHIELD  ⭐   │  │  SETTLEMENT           │  │
+│   │  ₹499/mo     │  │  ₹1,999/mo    │  │  10% + GST            │  │
+│   │  ₹4,999/yr   │  │  ₹14,999/yr   │  │  on settled amount    │  │
+│   │              │  │               │  │                       │  │
+│   │  ✅ Dashboard │  │  ✅ Dashboard  │  │  ✅ Full negotiation  │  │
+│   │  ✅ 7 tools   │  │  ✅ 7 tools    │  │  ✅ Creditor comms    │  │
+│   │  ✅ AA data   │  │  ✅ AA data    │  │  ✅ Legal notices     │  │
+│   │  ✅ Quarterly │  │  ✅ Quarterly  │  │  ✅ All Lite features │  │
+│   │    CIBIL     │  │    CIBIL      │  │                       │  │
+│   │              │  │  ✅ Harassment │  │  Min debt: ₹1,00,000  │  │
+│   │              │  │    protection │  │                       │  │
+│   │              │  │  ✅ Creditor   │  │  [Book a Call →]      │  │
+│   │              │  │    comms      │  │                       │  │
+│   │  [Subscribe] │  │  [Subscribe]  │  │                       │  │
+│   └──────────────┘  └───────────────┘  └───────────────────────┘  │
+│                                                                    │
+│   Not sure? [Book a free 15-min call →]                           │
+│                                                                    │
+│   All plans include: DPDP-compliant data handling, cancel anytime │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+**Design Notes:**
+- Shield card slightly highlighted (recommended tier) with star badge
+- Settlement is not a "plan" — it's a service. CTA is "Book a Call" not "Subscribe"
+- Monthly/Annual toggle switches prices in all cards simultaneously
+- Show savings percentage on annual toggle
+- If trial expired: show "Your trial has ended" banner at top, dashboard blurred behind the paywall
+
+**Functional Requirements:**
+
+| ID | Requirement | Priority |
+|----|------------|----------|
+| TS-01 | Monthly/Annual toggle updates all card prices simultaneously | P0 |
+| TS-02 | Lite/Shield "Subscribe" → UPI payment flow (Razorpay/Cashfree) | P0 |
+| TS-03 | Settlement "Book a Call" → callback scheduling (same as existing callback flow) | P0 |
+| TS-04 | Show trial days remaining countdown (or "Trial ended" if expired) | P0 |
+| TS-05 | After successful payment → redirect to dashboard with tier badge | P0 |
+| TS-06 | Annual savings percentage shown ("Save 17%" for Lite, "Save 37%" for Shield) | P1 |
+| TS-07 | "Not sure?" link → callback scheduling | P1 |
+| TS-08 | Feature comparison tooltip/expand on mobile | P1 |
 
 ---
 
@@ -329,7 +409,7 @@ For each loan/card:
 total_annual_savings = sum(savings_per_account for all accounts where current_rate > optimal_rate)
 ```
 
-> This is a simplified model. The actual optimal rate depends on the user's CIBIL score and lending partner rates, but for the scare score we use a reasonable estimate.
+> This is a simplified model. The actual optimal rate depends on the user's CIBIL score and lending partner rates, but for the health score we use a reasonable estimate.
 
 ---
 
@@ -366,18 +446,47 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 │   at         │     │  outcome     │     │  subscribed_at   │
 └──────────────┘     └──────────────┘     │  expires_at      │
                                           │  payment_ref     │
+                                          │  tier            │
+                                          │  (lite/shield)   │
+                                          │  billing_period  │
+                                          │  (monthly/annual)│
+                                          │  amount_paid     │
                                           └──────────────────┘
+
+┌──────────────────┐     ┌──────────────────┐
+│  ServiceRequest  │     │  SettlementCase  │
+│                  │     │                  │
+│  id              │     │  id              │
+│  user_id         │     │  user_id         │
+│  type            │     │  total_debt      │
+│  (harassment/    │     │  target_amount   │
+│   creditor_comms)│     │  status          │
+│  status          │     │  (intake/        │
+│  (open/active/   │     │   negotiating/   │
+│   resolved)      │     │   settled/closed)│
+│  details         │     │  started_at      │
+│  assigned_to     │     │  settled_at      │
+│  created_at      │     │  settled_amount  │
+│  resolved_at     │     │  fee_amount      │
+└──────────────────┘     │  assigned_to     │
+                         └──────────────────┘
 ```
+
+> [!NOTE]
+> `ServiceRequest` and `SettlementCase` are tracked manually in CRM (Zoho) at launch. These database entities exist for future product-managed service flows (Phase 2). At launch, the team creates/updates these via CRM, not the user dashboard.
 
 ### Key Data Rules
 
 | Rule | Detail |
 |------|--------|
 | **PAN Storage** | Store only **hashed PAN** (SHA-256). Never store raw PAN after CIBIL pull. |
-| **CIBIL Raw Data** | Store encrypted. Auto-expire after 30 days. User can request deletion. |
+| **CIBIL Raw Data** | Store **raw XML** encrypted. Raw XML auto-expires after 30 days. **Parsed data (loan accounts, scores, health score) persists indefinitely** in the lead profile for sales team access. User can request full deletion (DPDP). |
 | **Phone** | Store with OTP verification status. Primary contact for callbacks. |
 | **Consent** | Store timestamp, IP, consent text version. Required for DPDP compliance. |
+| **Shield Consent** | Shield subscribers must provide explicit consent for ExitDebt to communicate with creditors on their behalf. Separate consent checkbox, stored with timestamp. |
 | **Lead Dedup** | Same phone number within 30 days = update existing record, don't create duplicate. |
+| **Post-Trial Retention** | When subscription expires: **block user's dashboard access** (show "Subscribe to continue" screen). **Do NOT delete** lead profile, parsed CIBIL data, health score, or CRM record. Sales team retains full access. Expired users remain service-eligible leads. |
+| **Settlement Data** | Settlement case details (debt amounts, creditor names, negotiation notes) stored encrypted. Access restricted to assigned team member + Kumar. User can request deletion after case closure (DPDP). |
 
 ---
 
@@ -388,11 +497,11 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | Integration | Purpose | Phase |
 |------------|---------|-------|
 | **TransUnion CIBIL API** | Pull credit report using PAN (initial + quarterly refresh) | Phase 1 |
-| **Account Aggregator** (Finvu/OneMoney) | Monthly data refresh for subscribers (FIU registration required) | Phase 1 (Sprint 4–5) |
+| **Account Aggregator** (**Setu** primary / **Finvu** backup) | Monthly data refresh for subscribers (FIU registration required) | Phase 1 (Sprint 4–5) |
 | **SMS OTP Provider** (MSG91/Twilio) | Phone verification | Phase 1 |
 | **Zoho CRM API** | Create/update lead profiles, assign callbacks | Phase 1 |
 | **WATI (WhatsApp API)** | Confirmation messages, nurture drips | Phase 1 |
-| **UPI Payment Aggregator** (Razorpay/Cashfree) | UPI collect/intent for ₹999/year subscription payments | Phase 1 |
+| **UPI Payment Aggregator** (Razorpay/Cashfree) | UPI collect/intent for tiered subscription payments (Lite/Shield monthly/annual) | Phase 1 |
 
 ### Core API Endpoints
 
@@ -403,13 +512,19 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | POST | `/api/health-check` | Submit PAN + phone → trigger CIBIL pull → return parsed results |
 | GET | `/api/health-check/:id` | Get results for a completed health check |
 | POST | `/api/callback` | Book a callback with time preference |
-| POST | `/api/subscription/purchase` | Initiate UPI payment for ₹999/year subscription |
-| GET | `/api/subscription/status` | Check subscription status (trial/active/expired) |
+| GET | `/api/subscription/plans` | List available plans with pricing (Lite/Shield, monthly/annual) |
+| POST | `/api/subscription/purchase` | Initiate UPI payment for Lite/Shield subscription (monthly or annual) |
+| POST | `/api/subscription/upgrade` | Upgrade tier (Lite → Shield) with prorated billing |
+| GET | `/api/subscription/status` | Check subscription status (trial/active/expired) + tier + days remaining |
 | POST | `/api/aa/consent` | Initiate AA consent flow for data linking |
 | GET | `/api/aa/fetch` | Fetch latest data from Account Aggregator |
 | GET | `/api/dashboard/:userId` | Get full dashboard data (Freedom GPS, Interest Leak, Payment Prioritizer, Cash Flow) |
-| GET | `/api/dashboard/sales/:userId` | Sales-only: full dashboard + 12-month trends + lender offers |
+| GET | `/api/dashboard/sales/:userId` | Sales-only: full dashboard + 12-month trends + service request queue |
 | POST | `/api/prioritizer/calculate` | Calculate optimal payment allocation for given extra amount |
+| POST | `/api/service-request` | Submit Shield service request (harassment report or creditor comms) |
+| GET | `/api/service-request/:userId` | List user's service requests with current status |
+| POST | `/api/settlement/intake` | Submit settlement intake (validates ₹1L+ min debt, creates case in CRM) |
+| GET | `/api/settlement/:userId` | Get settlement case status (if active) |
 
 ---
 
@@ -475,11 +590,11 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 
 | Sprint | Weeks | Focus | Deliverables |
 |--------|-------|-------|-------------|
-| **Sprint 1** | 1–2 | Foundation | Project setup, design system, DB schema, FastAPI scaffold |
+| **Sprint 1** | 1–2 | Foundation | Project setup, design system, DB schema (incl. ServiceRequest + SettlementCase entities), FastAPI scaffold |
 | **Sprint 2** | 3–4 | Core Backend | CIBIL API integration, OTP flow, health score algorithm, savings calculator |
 | **Sprint 3** | 5–6 | Core Frontend + Intelligence | Landing page, onboarding, dashboard with Freedom GPS, Interest Leak Report, Payment Prioritizer, Cash Flow |
 | **Sprint 4** | 7–8 | Integration + AA | CRM integration, lead scoring, AA FIU registration + consent flow, Credit Score Impact Predictor |
-| **Sprint 5** | 9–10 | Subscription + Polish | UPI payment for ₹999/year, subscription gate, WhatsApp nudges, Milestone Celebrations, Sales Dashboard |
+| **Sprint 5** | 9–10 | Subscription + Services | Tier selection screen (Screen 5), UPI payment for Lite/Shield (monthly/annual), plan upgrade flow, subscription gate, service request form (Shield), settlement intake form, WhatsApp nudges, Milestone Celebrations, Sales Dashboard |
 | **Sprint 6** | 11–12 | Testing + Launch Prep | Bug fixes, performance, chatbot, internal testing |
 | **Sprint 7** | 13 | Soft Launch | Beta users, monitoring, hotfixes |
 
@@ -494,27 +609,46 @@ total_annual_savings = sum(savings_per_account for all accounts where current_ra
 | Mobile responsiveness | Works on 360px+ width (₹10K phone on 4G) |
 | PWA support | Installable, works offline for cached results |
 | Data encryption | AES-256 for stored CIBIL data, TLS 1.3 for transit |
-| DPDP compliance | Consent flows, data deletion request support |
+| DPDP compliance | Consent flows, granular checkboxes (CIBIL, partner sharing, creditor comms), data deletion request support |
 | Uptime | 99.5% (AWS managed services) |
 | Analytics | PostHog or Mixpanel for funnel tracking |
 
 ---
 
-## Appendix: Key Decisions Log
+## 9. Phase 2 Service Screens (Appendix)
 
-| Decision | Rationale | Decided By |
-|----------|-----------|-----------|
-| PAN-based CIBIL pull (not manual entry) | Zero friction, instant value, verified lead data | Kumar |
-| Organic-only GTM | Debt = shame topic, organic trust > paid ads | Kumar |
-| Subscription model (₹999/year, 3mo free) | Tool-as-product, recurring revenue, clean value exchange | Kumar |
-| Zerodha-like design | Clean, transparent, trust-first | Kumar |
-| Python (FastAPI) backend | Dev team preference, strong for data processing/algorithms | Kumar |
-| UPI payments via aggregator | India-native, lower fees than cards | Kumar |
-| CIBIL + AA hybrid data strategy | CIBIL for discovery, AA for cheap ongoing monitoring | Kumar + ARIA |
-| 7 unique intelligence tools | Differentiation from free CIBIL apps (Freedom GPS, Interest Leak, etc.) | Kumar + ARIA |
-| User dashboard vs Sales dashboard separation | Clean UX for users, information advantage for sales team | Kumar |
-| Next.js frontend | SEO critical for organic/chatbot discoverability | ARIA |
-| PostgreSQL | Structured financial data, ACID compliance needed | ARIA |
-| Zoho CRM (free tier) | Cost-effective for beta, can upgrade later | ARIA |
-| No success fees | Keep pricing clean — user pays ₹999/year only. Revenue from lender commissions + lead gen. | Kumar |
-| Disclosure in Privacy Policy | Lender commissions + lead sales disclosed in Privacy Policy & Terms, not on landing page. Consent checkbox covers data sharing. | Kumar |
+> [!NOTE]
+> These screens are **not built at launch**. At launch, Shield/Settlement services are delivered manually by the team using CRM (Zoho). These product screens get built when service volume justifies automation.
+
+### 9.1 Shield Dashboard Panel (User View)
+
+**Purpose:** Let Shield subscribers view and manage their service requests.
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| Service request list | Show all open/resolved requests with status badges | P1 |
+| New request form | Submit harassment report or creditor communication request | P1 |
+| Communication log | Timeline of creditor interactions done on user's behalf | P2 |
+| Document upload | Upload harassment evidence (screenshots, call recordings) | P2 |
+
+### 9.2 Settlement Tracker (User View)
+
+**Purpose:** Let settlement users track their case progress.
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| Case status | Visual timeline: Intake → Negotiating → Settled/Closed | P1 |
+| Debt breakdown | Show total debt vs. target settlement amount | P1 |
+| Fee transparency | Show estimated fee (10% + GST) based on current negotiation | P2 |
+| Document exchange | Secure upload/download for settlement agreements | P2 |
+
+### 9.3 Admin Dashboard Expansion
+
+**Purpose:** Give the sales team (Kumar + F1/F2) a service management interface.
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| Service request queue | Filterable list of all open Shield requests, sorted by urgency | P1 |
+| Settlement case board | Kanban-style board: Intake → Negotiating → Settled → Closed | P1 |
+| Creditor templates | Pre-built communication templates for top 10 banks/NBFCs | P1 |
+| User timeline | Full history of a user's interactions, scores, requests, payments | P2 |
