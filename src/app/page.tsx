@@ -27,7 +27,7 @@ const TRUST_ICONS: Record<string, React.ReactNode> = {
 const TRUST_POINTS = [
   { icon: "shield", title: "Bank-grade encryption", desc: "Your data is encrypted end-to-end. We never store your PAN." },
   { icon: "chart", title: "No CIBIL impact", desc: "This is a soft pull. Your credit score stays exactly where it is." },
-  { icon: "dollar", title: "Always free", desc: "We make money from lenders, not from you. You never pay us anything." },
+  { icon: "dollar", title: "3-month free trial", desc: "Full dashboard access free for 3 months. Plans start at ₹499/month after trial." },
   { icon: "block", title: "No data selling", desc: "We don't sell, share, or trade your personal data. Period." },
 ];
 
@@ -41,7 +41,7 @@ const LANDING_FAQS = [
   { question: "Is this a scam?", answer: "ExitDebt is a registered debt advisory platform. We don't ask for your bank password. We don't move your money. We only read your credit report to show you where you're overpaying." },
   { question: "Will this hurt my CIBIL score?", answer: "No. We do a soft credit check. This has zero impact on your CIBIL score. Only hard inquiries from loan applications affect your score." },
   { question: "Is my PAN safe?", answer: "Your PAN is hashed instantly using SHA-256. We never store your raw PAN. All data is encrypted with bank-grade AES-256 encryption and auto-deleted after 30 days." },
-  { question: "Is this really free?", answer: "The debt check is 100% free. Always. We earn from lenders when you choose to restructure — never from you." },
+  { question: "Is there a free trial?", answer: "Yes! Every new user gets a free 3-month trial with full dashboard access. After the trial, plans start at just ₹499/month. We also offer Shield protection and one-time Settlement services." },
 ];
 
 const ARTICLES = [
@@ -172,7 +172,7 @@ export default function Home() {
 
               {/* Trust pills */}
               <div className="flex flex-wrap gap-3">
-                {["No CIBIL impact", "256-bit encrypted", "Free forever"].map((t) => (
+                {["No CIBIL impact", "256-bit encrypted", "3-month free trial"].map((t) => (
                   <span
                     key={t}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
@@ -304,7 +304,7 @@ export default function Home() {
                         Show Me My Savings →
                       </PrimaryButton>
                       <p className="text-xs text-center" style={{ color: "var(--color-text-muted)" }}>
-                        We don&apos;t charge you. Ever.
+                        Start with a free 3-month trial.
                       </p>
                     </div>
                   </>

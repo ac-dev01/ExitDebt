@@ -275,6 +275,57 @@ export default function IncomePage() {
                     We use this only to calculate your debt-to-income ratio and cash flow.
                     You can update this anytime in settings.
                 </p>
+
+                {/* Shield / Settlement Teaser */}
+                <div
+                    className="mt-10 rounded-2xl p-6 sm:p-8 animate-fadeIn"
+                    style={{
+                        backgroundColor: "var(--color-bg-card)",
+                        border: "1px solid var(--color-border)",
+                        boxShadow: "0 4px 32px rgba(0,0,0,0.04)",
+                    }}
+                >
+                    <h3
+                        className="text-base font-bold mb-4"
+                        style={{ color: "var(--color-text-primary)" }}
+                    >
+                        Need more help?
+                    </h3>
+                    <div className="space-y-3">
+                        <div className="flex items-start gap-3">
+                            <span className="text-lg">🛡️</span>
+                            <div>
+                                <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                                    Shield
+                                </p>
+                                <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                                    Harassment protection + creditor negotiation
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <span className="text-lg">💰</span>
+                            <div>
+                                <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                                    Settlement
+                                </p>
+                                <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                                    We negotiate debt reduction for you
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <Link
+                        href="/upgrade"
+                        className="inline-flex items-center gap-1 text-sm font-semibold mt-4 transition-all hover:opacity-80"
+                        style={{ color: "var(--color-purple)" }}
+                    >
+                        Learn about our services
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </Link>
+                </div>
             </main>
         </div>
     );

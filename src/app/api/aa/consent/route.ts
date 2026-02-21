@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 /**
  * POST /api/aa/consent
  * Body: { userId: string, phone: string }
- * Initiate Account Aggregator consent flow for data linking.
- * Returns: { success, consentId, redirectUrl }
- *
- * NOTE: Mock implementation. In production, integrate with
- * Setu/OneMoney/Finvu AA framework.
+ * Initiate Account Aggregator consent flow via backend Setu AA service.
+ * Returns: { success, consentId, redirectUrl, status }
  */
+
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
@@ -28,24 +28,37 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Mock AA consent initiation
-        const consentId = `aa_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        // Call backend AA consent endpoint
+        const backendResp = await fetch(`${BACKEND_URL}/aa/consent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                phone,
+                fi_types: ["DEPOSIT", "CREDIT_CARD", "TERM_DEPOSIT"],
+            }),
+        });
+
+        const data = await backendResp.json();
+
+        if (!backendResp.ok) {
+            return NextResponse.json(
+                { success: false, error: data?.detail || "Failed to create AA consent" },
+                { status: backendResp.status }
+            );
+        }
 
         return NextResponse.json({
             success: true,
-            consentId,
-            status: "PENDING",
-            redirectUrl: `https://aa.exitdebt.com/consent/${consentId}`, // Mock
-            expiresIn: 600, // 10 minutes
-            dataTypes: ["DEPOSIT", "TERM_DEPOSIT", "RECURRING_DEPOSIT", "CREDIT_CARD", "LOAN"],
-            fiTypes: ["SAVINGS", "DEPOSITS", "TERM-DEPOSIT", "CREDIT-CARD"],
+            consentId: data.id,
+            status: data.status,
+            redirectUrl: data.url,
             message: "Consent request created. Redirect user to complete AA approval.",
             createdAt: new Date().toISOString(),
         });
     } catch {
         return NextResponse.json(
-            { success: false, error: "Invalid request body." },
-            { status: 400 }
+            { success: false, error: "Internal server error creating AA consent." },
+            { status: 500 }
         );
     }
 }

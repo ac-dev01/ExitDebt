@@ -24,8 +24,8 @@ const trustFaqs = [
         answer: "No. We only read your credit report from the bureau. Your bank is never contacted or notified. This is completely private.",
     },
     {
-        question: "Is this really free?",
-        answer: "The debt health check is 100% free. Always. We earn from lenders when you choose to restructure — never from you. There's no catch.",
+        question: "Is there a free trial?",
+        answer: "Yes! Every new user gets a free 3-month trial with full access to the debt health dashboard and all 7 intelligence tools. After the trial, you can choose from Lite (₹499/month), Shield (₹1,999/month), or our one-time Settlement service.",
     },
 ];
 
@@ -36,7 +36,7 @@ const aboutFaqs = [
     },
     {
         question: "How much can I actually save?",
-        answer: "It depends on your debt profile. On average, our users save between ₹30,000 and ₹80,000 per year in interest charges. Users with high-interest credit card debt often save even more.",
+        answer: "It depends on your debt profile. Dashboard users typically save ₹30,000–₹80,000/year through optimized payments. Settlement users can save significantly more — we negotiate directly with creditors to reduce your total outstanding debt.",
     },
     {
         question: "What is a Debt Health Score?",
@@ -48,7 +48,7 @@ const aboutFaqs = [
     },
     {
         question: "What happens after I check my debt health?",
-        answer: "You'll see your complete dashboard with actionable insights. You can then schedule a free call with our expert to discuss a savings plan. There's zero obligation — the consultation itself is always free.",
+        answer: "You'll see your complete dashboard with actionable insights. You can continue with our free trial for 3 months. After that, choose Lite for ongoing dashboard access, Shield for harassment protection and creditor negotiation, or our Settlement service for full debt negotiation.",
     },
 ];
 

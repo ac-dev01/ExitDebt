@@ -36,10 +36,10 @@ const faqSchema = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Is this really free?",
+      name: "Is there a free trial?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. The debt health check is completely free. We earn a referral fee from lenders when you choose to restructure your debt through our partners.",
+        text: "Yes. Every new user gets a free 3-month trial with full dashboard access. After the trial, plans start at ₹499/month (Lite). We also offer Shield protection and Settlement services.",
       },
     },
     {
@@ -47,7 +47,7 @@ const faqSchema = {
       name: "How do you make money?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We earn from lenders, not from you. When we help you consolidate or restructure your debt at a lower rate, the lending partner pays us a referral fee.",
+        text: "We offer tiered subscription plans: Lite (₹499/month), Shield (₹1,999/month) for protection services, and a one-time Settlement service (10% + GST). We may also earn referral fees from lending partners.",
       },
     },
     {

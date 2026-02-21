@@ -2,9 +2,14 @@
 
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
+import { useSubscription } from "@/lib/SubscriptionContext";
 
 export default function Navbar() {
     const { isLoggedIn, user, logout } = useAuth();
+    const { status, tier } = useSubscription();
+
+    const showUpgrade = isLoggedIn && (status === "trial" || status === "expired");
+    const isActive = status === "active";
 
     function handleSignOut() {
         logout();
@@ -46,6 +51,19 @@ export default function Navbar() {
                         >
                             Dashboard
                         </Link>
+                        {showUpgrade && (
+                            <Link
+                                href="/upgrade"
+                                className="text-sm font-bold px-3.5 py-1.5 rounded-full transition-all hover:opacity-80 hidden sm:block"
+                                style={{
+                                    backgroundColor: "rgba(115,0,190,0.08)",
+                                    color: "var(--color-purple)",
+                                    border: "1px solid rgba(115,0,190,0.15)",
+                                }}
+                            >
+                                Upgrade ✨
+                            </Link>
+                        )}
                         <Link
                             href="/schedule"
                             className="text-sm font-medium transition-colors hidden sm:block"
@@ -54,21 +72,38 @@ export default function Navbar() {
                             Schedule
                         </Link>
                         <Link
+                            href="/settings"
+                            className="text-sm font-medium transition-colors hidden sm:block"
+                            style={{ color: "var(--color-text-secondary)" }}
+                        >
+                            Settings
+                        </Link>
+                        <Link
                             href="/docs"
                             className="text-sm font-medium transition-colors hidden sm:block"
                             style={{ color: "var(--color-text-secondary)" }}
                         >
                             Docs
                         </Link>
-                        {/* Profile avatar */}
-                        <Link
-                            href="/profile"
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white transition-opacity hover:opacity-80"
-                            style={{ backgroundColor: "var(--color-purple)" }}
-                            title="Profile"
-                        >
-                            {user?.name?.charAt(0) || "U"}
-                        </Link>
+                        {/* Profile avatar + tier badge */}
+                        <div className="relative">
+                            <Link
+                                href="/profile"
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white transition-opacity hover:opacity-80"
+                                style={{ backgroundColor: "var(--color-purple)" }}
+                                title="Profile"
+                            >
+                                {user?.name?.charAt(0) || "U"}
+                            </Link>
+                            {isActive && tier && (
+                                <span
+                                    className="absolute -bottom-1 -right-1 text-[8px] font-bold px-1.5 py-0.5 rounded-full text-white leading-none"
+                                    style={{ backgroundColor: "var(--color-success)" }}
+                                >
+                                    {tier === "lite" ? "L" : "S"}
+                                </span>
+                            )}
+                        </div>
                         <button
                             onClick={handleSignOut}
                             className="text-sm font-medium transition-colors cursor-pointer hover:text-red-500"

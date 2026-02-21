@@ -18,6 +18,7 @@ class DebtAccount(Base):
     outstanding = Column(Float, nullable=False, default=0.0)
     interest_rate = Column(Float, nullable=True)
     emi_amount = Column(Float, nullable=True)
+    due_date = Column(Integer, nullable=True)  # Day of month (1-31)
     status = Column(String(30), nullable=False, default="active")  # active, closed, overdue, written_off
 
     # Relationships

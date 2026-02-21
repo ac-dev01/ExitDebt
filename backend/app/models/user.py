@@ -16,6 +16,7 @@ class User(Base):
     pan_hash = Column(String(64), nullable=False, index=True)  # SHA-256 hex digest
     phone = Column(String(15), nullable=False, index=True)
     name = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="user")  # user | sales | admin
     consent_ts = Column(DateTime, nullable=False)
     consent_ip = Column(String(45), nullable=False)  # IPv6 max length
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -25,3 +26,8 @@ class User(Base):
     health_scores = relationship("HealthScore", back_populates="user", cascade="all, delete-orphan")
     callbacks = relationship("Callback", back_populates="user", cascade="all, delete-orphan")
     advisory_plans = relationship("AdvisoryPlan", back_populates="user", cascade="all, delete-orphan")
+    subscriptions = relationship("Subscription", back_populates="user", cascade="all, delete-orphan")
+    service_requests = relationship("ServiceRequest", back_populates="user", cascade="all, delete-orphan")
+    settlement_cases = relationship("SettlementCase", back_populates="user", cascade="all, delete-orphan")
+    shield_consents = relationship("ShieldConsent", back_populates="user", cascade="all, delete-orphan")
+

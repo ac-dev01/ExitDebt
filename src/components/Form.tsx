@@ -19,10 +19,12 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
     const [panError, setPanError] = useState("");
     const [phoneError, setPhoneError] = useState("");
     const [consentError, setConsentError] = useState("");
+    const [verifiedName, setVerifiedName] = useState("");
 
     function handlePanChange(value: string) {
         const upper = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
         setPan(upper);
+        setVerifiedName(""); // Reset verification on PAN change
         if (upper.length === 10 && !validatePAN(upper)) {
             setPanError("Invalid PAN format. Expected: ABCDE1234F");
         } else {
@@ -40,7 +42,7 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
         }
     }
 
-    function handleSubmit(e: FormEvent) {
+    async function handleSubmit(e: FormEvent) {
         e.preventDefault();
         let valid = true;
 
@@ -59,10 +61,36 @@ export default function DebtForm({ onResult, isLoading, setIsLoading, submitted 
         if (!valid) return;
 
         setIsLoading(true);
+
+        try {
+            // Step 1: Verify PAN via Setu API
+            const panResp = await fetch("/api/pan/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    pan: pan.toUpperCase(),
+                    consent: "Y",
+                    reason: "Debt health check for ExitDebt user",
+                }),
+            });
+
+            if (panResp.ok) {
+                const panData = await panResp.json();
+                if (panData.verification === "success" && panData.data?.full_name) {
+                    setVerifiedName(panData.data.full_name);
+                }
+            }
+            // If PAN verification fails (backend down, etc.), continue with mock — non-blocking
+        } catch {
+            // PAN verification is best-effort; proceed with profile selection
+            console.warn("PAN verification unavailable, falling back to local profile");
+        }
+
+        // Step 2: Select profile and return result
         setTimeout(() => {
             const profile = selectProfile(pan);
             onResult(profile);
-        }, 2000);
+        }, 1500);
     }
 
     if (isLoading) {

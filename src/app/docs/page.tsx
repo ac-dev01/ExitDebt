@@ -142,51 +142,158 @@ const API_ENDPOINTS = [
     {
         method: "POST",
         path: "/api/callback",
-        desc: "Book a callback with time preference. Creates a CRM lead in production.",
+        desc: "Book a callback with time preference and optional reason (e.g. 'Settlement inquiry'). Creates a CRM lead in production.",
         body: `{
-  "phone": "9876543210",
-  "timeSlot": "Morning (10am – 12pm)",
-  "name": "Saurabh"
+  "user_id": "uuid",
+  "preferred_time": "2026-02-22T10:00:00Z",
+  "reason": "Settlement inquiry"
 }`,
         response: `{
-  "success": true,
-  "bookingId": "cb_1708367520_ab12",
-  "scheduledSlot": "Morning (10am – 12pm)",
-  "message": "Callback booked successfully."
-}`,
-    },
-    {
-        method: "POST",
-        path: "/api/subscription/purchase",
-        desc: "Initiate UPI payment for ₹999/year subscription. Returns a payment link (Razorpay/Cashfree in production).",
-        body: `{
-  "userId": "user_123",
-  "plan": "annual"
-}`,
-        response: `{
-  "success": true,
-  "subscriptionId": "sub_1708367520_xyz",
-  "amount": 999,
-  "currency": "INR",
-  "paymentLink": "https://pay.exitdebt.com/sub_...",
-  "expiresIn": 900
+  "id": "uuid",
+  "user_id": "uuid",
+  "preferred_time": "2026-02-22T10:00:00Z",
+  "status": "pending",
+  "message": "Callback scheduled successfully."
 }`,
     },
     {
         method: "GET",
-        path: "/api/subscription/status",
-        desc: "Check subscription status (trial / active / expired) and available features.",
+        path: "/api/subscription/plans",
+        desc: "Returns all available subscription plans with pricing. Public endpoint — no auth required.",
         body: null,
         response: `{
-  "success": true,
-  "status": "trial",
-  "daysRemaining": 7,
-  "features": {
-    "healthCheck": true,
-    "dashboardBasic": true,
-    "dashboardAdvanced": false,
-    "lenderOffers": false
-  }
+  "lite": { "monthly": 499, "annual": 4999, "annual_savings_pct": 17 },
+  "shield": { "monthly": 1999, "annual": 14999, "annual_savings_pct": 37 },
+  "settlement": { "fee": "10% + GST", "min_debt": 100000 }
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/subscription/status/:userId",
+        desc: "Get current subscription status — tier, billing period, trial/active/expired, days remaining.",
+        body: null,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "tier": "lite",
+  "status": "active",
+  "billing_period": "monthly",
+  "trial_ends_at": "2026-05-21T00:00:00Z",
+  "expires_at": "2026-03-21T00:00:00Z",
+  "days_remaining": 28,
+  "created_at": "2026-02-21T00:00:00Z"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/subscription/upgrade",
+        desc: "Upgrade subscription tier or change billing period. Handles trial → paid, Lite → Shield, and period changes. Shield requires prior consent.",
+        body: `{
+  "user_id": "uuid",
+  "tier": "shield",
+  "billing_period": "annual"
+}`,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "tier": "shield",
+  "status": "active",
+  "billing_period": "annual",
+  "amount_paid": 14999,
+  "expires_at": "2027-02-21T00:00:00Z",
+  "message": "Successfully upgraded to Shield (annual)."
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/subscription/shield-consent",
+        desc: "Record explicit Shield consent: 'I authorize ExitDebt to communicate with my creditors on my behalf.' Must be called before upgrading to Shield tier.",
+        body: `{
+  "user_id": "uuid"
+}`,
+        response: `{
+  "message": "Shield consent recorded.",
+  "consent_id": "uuid",
+  "timestamp": "2026-02-21T12:00:00Z"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/settlement/intake",
+        desc: "Start a settlement case. Validates debt ≥ ₹1,00,000. Prevents duplicate active cases. Creates CRM record.",
+        body: `{
+  "user_id": "uuid",
+  "total_debt": 500000,
+  "target_amount": 300000
+}`,
+        response: `{
+  "case": {
+    "id": "uuid",
+    "user_id": "uuid",
+    "total_debt": 500000,
+    "target_amount": 300000,
+    "status": "intake",
+    "settled_amount": null,
+    "fee_amount": null,
+    "assigned_to": null,
+    "started_at": "2026-02-21T12:00:00Z",
+    "settled_at": null
+  },
+  "message": "Settlement case created. Our team will contact you within 24 hours."
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/settlement/:userId",
+        desc: "Get the latest settlement case for a user. Returns status, amounts, assigned team member.",
+        body: null,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "total_debt": 500000,
+  "status": "negotiating",
+  "settled_amount": null,
+  "fee_amount": null,
+  "assigned_to": "Ravi S.",
+  "started_at": "2026-02-21T12:00:00Z"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/service-request",
+        desc: "Create a service request (Shield users only). Types: 'harassment' or 'creditor_comms'. Requires active Shield subscription.",
+        body: `{
+  "user_id": "uuid",
+  "type": "harassment",
+  "details": "Receiving threatening calls from HDFC recovery agents"
+}`,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "type": "harassment",
+  "status": "open",
+  "details": "Receiving threatening calls from HDFC recovery agents",
+  "assigned_to": null,
+  "created_at": "2026-02-21T12:00:00Z",
+  "resolved_at": null
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/service-request/:userId",
+        desc: "List all service requests for a user, ordered by creation date (newest first).",
+        body: null,
+        response: `{
+  "requests": [
+    {
+      "id": "uuid",
+      "type": "harassment",
+      "status": "active",
+      "assigned_to": "Legal Team",
+      "created_at": "2026-02-21T12:00:00Z"
+    }
+  ],
+  "total": 1
 }`,
     },
     {
@@ -220,43 +327,32 @@ const API_ENDPOINTS = [
     {
         method: "GET",
         path: "/api/dashboard/:userId",
-        desc: "Get full dashboard data — Freedom GPS, Interest Leak, Payment Prioritizer, Cash Flow, Health Score, and accounts.",
+        desc: "Get full dashboard data — Freedom GPS, Interest Leak, Payment Prioritizer, Cash Flow, Health Score, accounts, and subscription status.",
         body: null,
         response: `{
   "success": true,
   "profile": { "name": "Saurabh", "score": 40, ... },
-  "freedomGPS": {
-    "currentTimeline": "4y 3mo",
-    "optimizedTimeline": "3y 4mo",
-    "timelineSaved": "11 months sooner"
-  },
+  "subscription": { "tier": "lite", "status": "active", "daysRemaining": 28 },
+  "freedomGPS": { ... },
   "interestLeak": { ... },
-  "cashFlow": { ... },
-  "prioritizer": { "extraAmount": 5000, "allocations": [...] },
-  "savings": { "totalAnnual": 87120 }
+  "cashFlow": { ... }
 }`,
     },
     {
         method: "GET",
         path: "/api/dashboard/sales/:userId",
-        desc: "Sales-only: full dashboard + 12-month outstanding trends + lender consolidation offers. Internal use only.",
+        desc: "Sales-only: full dashboard + 12-month trends + subscription history + service history. Internal use only (requires X-API-Key).",
         body: null,
         response: `{
   "success": true,
   "salesView": true,
   "profile": { ... },
+  "subscription": { "tier": "shield", "upgrade_history": [...] },
   "trends": [
-    { "month": "Jan", "outstanding": 624000, "interestPaid": 5217 },
-    ...
+    { "month": "Jan", "outstanding": 624000, "interestPaid": 5217 }
   ],
-  "lenderOffers": [
-    {
-      "currentLender": "HDFC CC",
-      "currentRate": 42,
-      "offeredRate": 13,
-      "offeredBy": "SBI",
-      "monthlySaving": 3792
-    }
+  "serviceHistory": [
+    { "type": "harassment", "status": "resolved", ... }
   ]
 }`,
     },
@@ -277,6 +373,193 @@ const API_ENDPOINTS = [
     { "lender": "Bajaj Finserv", "amount": 4000, "savings": 1440 }
   ],
   "totalSavings": 3600
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/pan/verify",
+        desc: "Verify a PAN card number using Setu PAN API. In mock mode, returns synthetic data. Sandbox values: ABCDE1234A (valid), ABCDE1234B (invalid).",
+        body: `{
+  "pan": "ABCDE1234F",
+  "consent": "Y",
+  "reason": "Debt health check for ExitDebt user"
+}`,
+        response: `{
+  "verification": "success",
+  "message": "PAN is valid",
+  "data": {
+    "full_name": "Saurabh Mehta",
+    "category": "Individual",
+    "aadhaar_seeding_status": "Y"
+  }
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/payment/create-link",
+        desc: "Create a UPI payment link for subscription upgrade. In mock mode, returns a simulated link. In production, calls Setu UPI API.",
+        body: `{
+  "user_id": "user_123",
+  "tier": "shield",
+  "billing_period": "annual"
+}`,
+        response: `{
+  "id": "pay_abc123",
+  "user_id": "user_123",
+  "tier": "shield",
+  "billing_period": "annual",
+  "amount": 14999,
+  "currency": "INR",
+  "status": "CREATED",
+  "payment_link": "https://pay.setu.co/...",
+  "upi_link": "upi://pay?pa=exitdebt@ybl&am=14999",
+  "created_at": "2026-02-21T12:00:00Z"
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/payment/status/:paymentId",
+        desc: "Check the current status of a payment by its ID.",
+        body: null,
+        response: `{
+  "id": "pay_abc123",
+  "status": "PAYMENT_SUCCESSFUL",
+  "amount": 14999,
+  "currency": "INR"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/payment/confirm/:paymentId",
+        desc: "Mock-confirm a payment (development only). In production, payments are confirmed via Setu webhooks.",
+        body: null,
+        response: `{
+  "message": "Payment confirmed",
+  "payment": { "id": "pay_abc123", "status": "paid", "amount": 14999 }
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/payment/webhook",
+        desc: "Receive Setu UPI payment notifications. In production, webhook signature is verified before processing.",
+        body: `{
+  "type": "PAYMENT_SUCCESSFUL",
+  "paymentLinkId": "pay_abc123"
+}`,
+        response: `{
+  "success": true,
+  "message": "Webhook received"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/api/advisory/purchase",
+        desc: "Initiate an advisory plan purchase via UPI. Tiers: basic (₹499), standard (₹1,499), premium (₹2,999).",
+        body: `{
+  "user_id": "uuid",
+  "tier": "standard"
+}`,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "tier": "standard",
+  "price": 1499.0,
+  "status": "pending",
+  "plan_data": { "features": [...], "order_id": "MOCK_ORDER_..." },
+  "payment_url": "upi://pay?...",
+  "message": "Advisory plan (standard) created. Complete payment to activate."
+}`,
+    },
+    {
+        method: "GET",
+        path: "/api/advisory/:advisoryId",
+        desc: "Get advisory plan details by ID, including status, tier, price, and plan data.",
+        body: null,
+        response: `{
+  "id": "uuid",
+  "user_id": "uuid",
+  "tier": "standard",
+  "price": 1499.0,
+  "status": "active",
+  "plan_data": { "features": [...] },
+  "message": "Advisory plan (standard) — Status: active"
+}`,
+    },
+    {
+        method: "DELETE",
+        path: "/api/user/delete-request",
+        desc: "Request user data deletion (GDPR/DPDPA compliance). Soft-deletes personal data while preserving audit trail.",
+        body: `{
+  "user_id": "uuid",
+  "phone": "9876543210"
+}`,
+        response: `{
+  "success": true,
+  "message": "Your data deletion request has been processed. Personal data has been removed."
+}`,
+    },
+    {
+        method: "POST",
+        path: "/aa/consent",
+        desc: "Create an Account Aggregator consent request. Returns a redirect URL for user to approve data sharing.",
+        body: `{
+  "phone": "9876543210",
+  "fi_types": ["DEPOSIT", "CREDIT_CARD", "TERM_DEPOSIT"]
+}`,
+        response: `{
+  "id": "consent_abc123",
+  "url": "https://anumati.setu.co/consent/...",
+  "status": "PENDING"
+}`,
+    },
+    {
+        method: "GET",
+        path: "/aa/consent/:consentId",
+        desc: "Check the current status of an Account Aggregator consent request.",
+        body: null,
+        response: `{
+  "id": "consent_abc123",
+  "status": "APPROVED",
+  "fi_types": ["DEPOSIT", "CREDIT_CARD"],
+  "created_at": "2026-02-21T12:00:00Z"
+}`,
+    },
+    {
+        method: "POST",
+        path: "/aa/consent/:consentId/approve",
+        desc: "Mock-approve a consent (development only). In production, users approve via Setu's consent screens.",
+        body: null,
+        response: `{
+  "message": "Consent approved",
+  "consent": { "id": "consent_abc123", "status": "APPROVED" }
+}`,
+    },
+    {
+        method: "GET",
+        path: "/aa/data/:consentId",
+        desc: "Fetch financial data from Account Aggregator after consent approval. Returns parsed debt accounts from bank statements.",
+        body: null,
+        response: `{
+  "consent_id": "consent_abc123",
+  "status": "COMPLETED",
+  "accounts": [
+    { "type": "CREDIT_CARD", "issuer": "HDFC", "balance": 182000, "limit": 300000 }
+  ],
+  "raw_fi_count": 3
+}`,
+    },
+    {
+        method: "POST",
+        path: "/aa/webhook",
+        desc: "Receive Setu AA notifications (consent status updates, FI data ready). Webhook signature is verified in production.",
+        body: `{
+  "type": "CONSENT_STATUS_UPDATE",
+  "consentId": "consent_abc123",
+  "data": { "status": "APPROVED" }
+}`,
+        response: `{
+  "success": true,
+  "message": "Webhook received"
 }`,
     },
 ];
@@ -447,7 +730,10 @@ export default function DocsPage() {
                         {API_ENDPOINTS.map((ep) => (
                             <div key={ep.method + ep.path} className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--color-border)" }}>
                                 <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: "var(--color-bg-soft)" }}>
-                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white ${ep.method === "GET" ? "bg-blue" : "bg-purple"}`}>
+                                    <span
+                                        className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white"
+                                        style={{ backgroundColor: ep.method === "GET" ? "var(--color-blue)" : ep.method === "DELETE" ? "var(--color-danger)" : "var(--color-purple)" }}
+                                    >
                                         {ep.method}
                                     </span>
                                     <code className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>{ep.path}</code>

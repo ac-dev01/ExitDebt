@@ -131,6 +131,13 @@ export default function ProfilePage() {
                         >
                             ← Back to Dashboard
                         </Link>
+                        <Link
+                            href="/settings"
+                            className="flex-1 text-center py-2.5 px-4 rounded-lg font-medium text-sm transition-colors hover:bg-gray-50"
+                            style={{ border: "1px solid var(--color-border)", color: "var(--color-purple)" }}
+                        >
+                            ⚙ Settings
+                        </Link>
                         <button
                             onClick={handleLogout}
                             className="flex-1 text-center py-2.5 px-4 rounded-lg font-medium text-sm transition-colors cursor-pointer hover:bg-gray-50"

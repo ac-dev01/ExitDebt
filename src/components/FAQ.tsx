@@ -4,14 +4,14 @@ import { useState } from "react";
 
 const FAQ_ITEMS = [
     {
-        question: "Is this really free?",
+        question: "Is there a free trial?",
         answer:
-            "Yes. The debt health check is completely free. We earn a referral fee from lenders when you choose to restructure your debt through our partners – never from you directly.",
+            "Yes. Every new user gets a free 3-month trial with full access to the debt health dashboard and all 7 intelligence tools. After the trial, you can choose a plan starting at just ₹499/month (Lite).",
     },
     {
         question: "How do you make money?",
         answer:
-            "We earn from lenders, not from you. When we help you consolidate or restructure your debt at a lower rate, the lending partner pays us a referral fee. Your interests are always aligned with ours.",
+            "We offer tiered subscription plans: Lite (₹499/month) for dashboard access, Shield (₹1,999/month) for harassment protection and creditor negotiation, and a one-time Settlement service (10% + GST on settled amount). We may also earn referral fees from lending partners in the future.",
     },
     {
         question: "Is my PAN data safe?",
@@ -26,12 +26,12 @@ const FAQ_ITEMS = [
     {
         question: "What happens during the callback?",
         answer:
-            "A certified debt specialist will review your report with you, explain your options for debt restructuring, and answer any questions. There's no obligation to proceed – it's purely advisory.",
+            "A certified debt specialist will review your report with you, explain your options — including our Shield protection and Settlement services — and answer any questions. There's no obligation to proceed.",
     },
     {
         question: "How much can I actually save?",
         answer:
-            "Savings depend on your current debt profile. On average, our users save between ₹15,000 to ₹80,000 per year by switching from high-interest credit card debt to lower-rate personal loans or balance transfers.",
+            "Savings depend on your debt profile. Dashboard users typically save ₹15,000–₹80,000/year through smarter payments. Settlement users can save significantly more — we negotiate directly with creditors to reduce your total debt.",
     },
 ];
 

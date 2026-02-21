@@ -9,6 +9,8 @@ from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
 from app.routers import otp, health_check, callback, advisory, user, internal
+from app.routers import subscription, settlement, service_request
+from app.routers import pan, setu_aa, payment
 
 
 settings = get_settings()
@@ -24,6 +26,9 @@ async def lifespan(app: FastAPI):
     print(f"   Environment: {settings.ENVIRONMENT}")
     print(f"   Debug: {settings.DEBUG}")
     print(f"   OTP Provider: {settings.OTP_PROVIDER}")
+    print(f"   Setu PAN Provider: {settings.SETU_PAN_PROVIDER}")
+    print(f"   Setu AA Provider: {settings.SETU_AA_PROVIDER}")
+    print(f"   Setu UPI Provider: {settings.SETU_UPI_PROVIDER}")
     yield
     print("🛑 ExitDebt API shutting down...")
 
@@ -57,6 +62,12 @@ app.include_router(callback.router)
 app.include_router(advisory.router)
 app.include_router(user.router)
 app.include_router(internal.router)
+app.include_router(subscription.router)
+app.include_router(settlement.router)
+app.include_router(service_request.router)
+app.include_router(pan.router)
+app.include_router(setu_aa.router)
+app.include_router(payment.router)
 
 
 @app.get("/", tags=["Root"])

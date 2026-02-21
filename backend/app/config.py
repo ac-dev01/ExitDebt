@@ -44,6 +44,30 @@ class Settings(BaseSettings):
     PAYMENT_PROVIDER: str = "mock"
     PAYMENT_API_KEY: str = ""
 
+    # Setu Account Aggregator
+    SETU_AA_BASE_URL: str = "https://fiu-uat.setu.co"
+    SETU_AA_CLIENT_ID: str = ""
+    SETU_AA_CLIENT_SECRET: str = ""
+    SETU_AA_PRODUCT_INSTANCE_ID: str = ""
+    SETU_AA_REDIRECT_URL: str = "http://localhost:3000/aa/callback"
+    SETU_AA_PROVIDER: str = "mock"  # "mock" or "setu"
+
+    # Setu UPI Payments
+    SETU_UPI_BASE_URL: str = "https://uat.setu.co"
+    SETU_UPI_CLIENT_ID: str = ""
+    SETU_UPI_CLIENT_SECRET: str = ""
+    SETU_UPI_PROVIDER: str = "mock"  # "mock" or "setu"
+
+    # Setu Auth
+    SETU_AUTH_URL: str = "https://accountservice.setu.co"
+
+    # Setu PAN Verification
+    SETU_PAN_BASE_URL: str = "https://dg-sandbox.setu.co"
+    SETU_PAN_CLIENT_ID: str = ""
+    SETU_PAN_CLIENT_SECRET: str = ""
+    SETU_PAN_PRODUCT_INSTANCE_ID: str = ""
+    SETU_PAN_PROVIDER: str = "mock"  # "mock" or "setu"
+
     # Rate Limiting
     RATE_LIMIT_CIBIL_PULLS: int = 3
     RATE_LIMIT_WINDOW_HOURS: int = 24
