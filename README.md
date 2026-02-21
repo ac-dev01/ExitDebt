@@ -38,21 +38,6 @@ Tiered subscriptions + debt services:
 | WhatsApp | WATI |
 | Hosting | AWS (specific services TBD with dev team) |
 
-## 📂 Project Docs
-
-| Document | Description |
-|----------|-------------|
-| [STRATEGY.md](./STRATEGY.md) | Master strategy — vision, business model, brand, tech direction, decisions log |
-| [PRD.md](./PRD.md) | Product requirements — feature specs, data model, API design, sprint plan |
-| [docs/PARTNERSHIPS.md](./docs/PARTNERSHIPS.md) | AA providers (Setu/Finvu), lending partners (IDFC FIRST/Tata Capital/Fibe), DSA→LSP plan |
-| [docs/GTM.md](./docs/GTM.md) | Go-to-market — lead gen funnel, channel strategy, LLM recommendations, launch timeline |
-| [docs/OPERATIONS.md](./docs/OPERATIONS.md) | Sales team operations — call workflow, CRM, cost structure, key metrics |
-| [docs/COMPETITIVE.md](./docs/COMPETITIVE.md) | Competitive landscape, pricing benchmarks, full-spectrum market positioning |
-| [docs/DELEGATION.md](./docs/DELEGATION.md) | 90-day delegation plan — Kumar, F1, F2, ARIA roles, weekly cadence, ESOP |
-| [docs/PRICING_ANALYSIS.md](./docs/PRICING_ANALYSIS.md) | Tiered pricing model — Lite/Shield/Settlement, revenue projections, breakeven |
-| [docs/DSA_REGISTRATION.md](./docs/DSA_REGISTRATION.md) | DSA registration prep — documents, process per lender, pitch script |
-| [docs/CONTENT_CALENDAR.md](./docs/CONTENT_CALENDAR.md) | Reddit/X content calendar — 3-phase organic plan, weekly cadence |
-
 ## 📊 Status
 
 | Milestone | Status |
@@ -72,3 +57,4 @@ Tiered subscriptions + debt services:
 ---
 
 *Part of [Aaditri Technologies](../README.md)*
+
